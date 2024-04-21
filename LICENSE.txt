@@ -1,0 +1,12 @@
+## Plugin Lizenz-Vereinbarung
+
+Copyright © 2023 MRPacket
+
+MRPacket erteilt hiermit ausdrücklich die Erlaubnis zur Verwendung dieser Software sowie des zur Verfügung gestellten Codes (API), ausschließlich zur Abwicklung sowie Inanspruchnahme der von MRPacket angebotenen Versanddienstleistungen. 
+
+Die Erlaubnis zu einer darüberhinausgehenden Weiterverwendung, insbesondere zur Versandabwicklung durch - von MRPacket - unabhängige Dritte, wird nicht erteilt.
+MRPacket übernimmt keine Haftung und leistet auch sonst nicht Gewähr für die zur Verfügung gestellte Software sowie allenfalls dadurch verursachte Schäden beim Nutzer sowie Dritten.
+Die gegenständlichen Copyright-Bestimmungen sind bei der Verwendung dieser Software jedenfalls anzuführen.
+
+* License:           GPL v2 or later
+* License URI:       https://www.gnu.org/licenses/gpl-2.0.html

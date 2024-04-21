@@ -1,0 +1,79 @@
+.wrap.mrpacket {
+	position: relative;
+
+	a {
+		color: #458258;
+		&:hover {
+			color: #458258;
+			text-decoration: underline;
+		}
+	}
+
+	.notice p {
+		margin-bottom: initial;
+	}
+	
+	.refresh-form {
+		position: relative;
+		right: 0;
+		top: 0
+	}
+
+	.refresh-form .btn {
+		background: #458258;
+		color: #fff
+	}
+
+	.refresh-form .btn.btn-primary {
+	border-color: #458258;
+	}
+
+	.refresh-form .btn.btn-secondary {
+		background: #fff;
+		color: #373737;
+	}
+	.refresh-form .btn:hover {
+		text-decoration: underline;
+	}
+
+	.form-table input[type="text"] {
+		min-width: 400px
+	}
+
+	.form-table th {
+		width: 250px
+	}
+
+	.form-table td {
+		padding: 15px 0
+	}
+
+	h1 {
+		font-size: 23px;
+		font-weight: 700;
+		margin: 0;
+		padding: 9px 0 4px 0;
+		line-height: 29px
+	}
+
+	h2 {
+		font-size: 18px;
+		font-weight: 400;
+		margin: 0;
+		padding: 9px 0 4px 0;
+		line-height: 29px
+	}
+
+	.buttons button[type="button"] {
+		display: none;
+	}
+
+	table.table-bordered.dataTable {
+		background: #fff;
+	}
+
+	#dataTable_wrapper select {
+		padding: 4px 24px 0 8px;
+	}
+
+}

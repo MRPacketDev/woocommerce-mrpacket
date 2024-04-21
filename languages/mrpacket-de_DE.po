@@ -1,0 +1,366 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: MRPacket\n"
+"POT-Creation-Date: 2024-04-21 19:18+0200\n"
+"PO-Revision-Date: 2024-04-21 19:18+0200\n"
+"Last-Translator: \n"
+"Language-Team: MRPacket GmbH <info@mrpacket.com>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_;esc_html__;esc_html_e;wp_kses;esc_attr;"
+"esc_attr_e\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: assets\n"
+"X-Poedit-SearchPath-2: templates\n"
+
+#: src/Admin.php:126 src/Admin.php:154 src/Admin.php:155 src/Settings.php:56
+msgid "MRPacket Settings"
+msgstr "MRPacket Einstellungen"
+
+#: src/Admin.php:140 src/Admin.php:141
+msgid "MRPacket Tracking"
+msgstr "MRPacket Tracking"
+
+#: src/Admin.php:164 src/Settings.php:39
+msgid ""
+"You dont have permission to manage options. Please contact site "
+"administrator. You need the capability (access right) \\'edit_mrpacket\\'."
+msgstr ""
+"Sie haben nicht ausreichend Rechte um Optionen zu verwalten. Bitte "
+"kontaktieren Sie den Administrator dieser Seite. Sie benötigen das "
+"Zugriffsrecht \\'edit_mrpacket\\'."
+
+#: src/Admin.php:172 src/Settings.php:83
+msgid "Sorry, your nonce was not correct. Please try again."
+msgstr ""
+"Entschuldigung, die Prüfsumme ihrer Anfrage war nicht korrekt. Bitte "
+"versuchen Sie es erneut oder wenden Sie sich an den Administrator."
+
+#: src/I18n.php:35
+msgid "MRPacket"
+msgstr "MRPacket"
+
+#: src/I18n.php:36
+msgid ""
+"The MRPacket plugin enables you to transfer order data from your WooCommerce "
+"shop directly to MRPacket."
+msgstr ""
+"Mit dem MRPacket-Plugin können Sie Bestelldaten von Ihrem WooCommerce-Shop "
+"direkt an MRPacket übertragen."
+
+#: src/MRPacketCancel.php:59
+msgid "Removed"
+msgstr "Entfernt"
+
+#: src/MRPacketCancel.php:98
+msgid "Canceled"
+msgstr "Abgebrochen"
+
+#: src/MRPacketCreate.php:55
+msgid ""
+"No new orders could be found for transfer to MRPacket business with allowed "
+"status (See Settings). List is up to date."
+msgstr ""
+"Es konnten keine neuen Bestellungen zur Übertragung an MRPacket mit "
+"erlaubtem Status (Vgl. Einstellungen) gefunden werden. Die Liste ist aktuell."
+
+#: src/MRPacketCreate.php:68
+msgid "Error Message: Error while preparing package/oder data for API-call"
+msgstr "Fehler bei der Vorbereitung des API Aufrufs"
+
+#: src/MRPacketCreate.php:341
+msgid "Exported"
+msgstr "Exported"
+
+#: src/MRPacketCreate.php:348
+msgid "Successfully created parcel. Order ID: "
+msgstr "Paket erfolgreich an MRPacket übertragen! Paket-Id: "
+
+#: src/MRPacketCreate.php:364
+msgid ""
+"Connection/Parcel create error. Please check the shop-admins E-Mail inbox "
+"for details."
+msgstr ""
+"Verbindungsfehler. Bitte prüfen Sie das Postfach der E-Mail Adresse die Sie "
+"in den MRPacket-Plugin-Einstellungen hinterlegt haben."
+
+#: src/MRPacketCreate.php:369
+msgid ""
+"Your Token seems to be invalid. Please go to the WooCommerce > Settings > "
+"MRPacket plugin settings dialogue and request a new one by entering your "
+"password and username again."
+msgstr ""
+"Ihr MRPacket Token scheint nicht mehr gültig zu sein. Bitte wechseln Sie in "
+"die Einstellungen des MRPacket-Plugins und fordern Sie einen neuen Token "
+"durch Eingabe ihrer E-Mail Adresse (Benutzername) und Passwort an."
+
+#: src/MRPacketHelper.php:78 src/MRPacketHelper.php:80
+msgid ""
+"Error: Auth Token is missing! Please go to WooCommerce > Settings > MRPacket "
+"plugin settings, and enter your MRPacket username and passwort to get one!"
+msgstr ""
+"Fehler: Auth-Token fehlt! Bitte wechseln Sie zu WooCommerce > Einstellungen "
+"> MRPacket Einstellungen. Geben Sie hier ihren MRPacket Benutzernamen (E-"
+"Mail) und Ihr Passwort ein, um einen neuen Token anzufordern!"
+
+#: src/MRPacketHelper.php:140
+msgid ""
+"Error sending mrpacket failure-mail: No valid email address set in mrpacket-"
+"plugin settings."
+msgstr ""
+"Fehler beim senden der MRPacket-Fehler E-Mail. Keine valide E-Mail Adresse "
+"in den MRPacket-Plugin Einstellungen hinterlegt."
+
+#: src/MRPacketHelper.php:148 src/MRPacketHelper.php:153
+msgid "WooCommerce: MRPacket-Plugin API-Error"
+msgstr "WooCommerce: MRPacket-Plugin API-Fehler aufgetreten"
+
+#: src/MRPacketHelper.php:155
+msgid "Dear Shop Owner,"
+msgstr "Sehr geehrter Shopbetreiber,"
+
+#: src/MRPacketHelper.php:157
+#, php-format
+msgid ""
+"a transfer of orders to the mrpacket backend by the \"%1$s\"-plugin failed."
+msgstr ""
+"eine Übertragung von Bestellungen an MRPacket durch das \"%1$s\"-Plugin "
+"schlug fehlt."
+
+#: src/MRPacketHelper.php:159
+msgid "To start the transfer again, please click here:"
+msgstr "Um die Übertragung erneut zu starten, klicken Sie bitte hier:"
+
+#: src/MRPacketHelper.php:161
+msgid "Restart Transmission"
+msgstr "Übertragung erneut starten"
+
+#: src/MRPacketHelper.php:163
+msgid "Please do not reply to this automatically generated email."
+msgstr "Bitte antworten Sie nicht auf diese automatisch generierte E-Mail."
+
+#: src/MRPacketHelper.php:165
+msgid "Sincerely, "
+msgstr "Mit freundlichen Grüßen, "
+
+#: src/MRPacketHelper.php:166
+msgid "Your MRPacket-Plugin"
+msgstr "Ihr MRPacket Plugin"
+
+#: src/MRPacketToken.php:44
+msgid ""
+"The following auth token shall be used for any further calls to mrpacket: "
+msgstr ""
+"Der folgende MRPacket Auth-Token wurde erfolgreich erstellt und wird für "
+"weitere Anfragen verwendet: "
+
+#: src/Settings.php:111
+msgid "Your username or password were invalid."
+msgstr "Ihr Benutzername oder Passwort ist nicht korrekt."
+
+#: src/Settings.php:123
+msgid "Status settings updated successfully."
+msgstr "Die Status-Einstellungen wurden erfolgreich aktualisiert."
+
+#: src/Settings.php:131
+msgid "Please enter a valid email address!"
+msgstr "Bitte geben Sie eine gültige E-Mail Adresse ein!"
+
+#: src/Settings.php:137
+msgid "Successfully updated E-Mail address!"
+msgstr "Ihre E-Mail Adresse wurde erfolgreich aktualisiert!"
+
+#: templates/page.backend.settings.php:17
+msgid "MRPacket Settings Page"
+msgstr "MRPacket Einstellungen"
+
+#: templates/page.backend.settings.php:26
+msgid "MRPacket API-Token"
+msgstr "MRPacket API-Token"
+
+#: templates/page.backend.settings.php:33
+msgid "Reset settings"
+msgstr "Einstellungen zurücksetzen"
+
+#: templates/page.backend.settings.php:37
+msgid "MRPacket Username"
+msgstr "MRPacket Benutzername"
+
+#: templates/page.backend.settings.php:41
+msgid "MRPacket Password"
+msgstr "MRPacket Passwort"
+
+#: templates/page.backend.settings.php:52
+msgid "Allowed order status"
+msgstr "Zu berücksichtigende Übertragungs-Status für Bestellungen"
+
+#: templates/page.backend.settings.php:56
+msgid ""
+"The transfer of an order to MRPacket depends on the status of the order. "
+"Please make sure to configure all status that you would like to use for "
+"sending to mrpacket here. An order is sent to MRPacket for each status "
+"configured (selected)."
+msgstr ""
+"Die Übertragung von Bestellungen zu MRPacket hängt vom Status der jeweiligen "
+"Bestellung ab. Bitte stellen Sie sicher, dass Sie hier ausschließlich "
+"Bestell-Status auswählen, die zu MRPacket übertragen werden sollen. Wechselt "
+"eine bisher nicht übertragene Bestellung in einen hier selektierbaren Status "
+"so wird diese zu MRPacket übertragen. Übertragungen finden alle 5 Minuten "
+"oder beim manuellen Betätigen des Buttons in der Übertragungsliste statt."
+
+#: templates/page.backend.settings.php:62
+msgid "-- DISABLE ALL --"
+msgstr "-- ALLE DEAKTIVIEREN (Keine Übertragung!) --"
+
+#: templates/page.backend.settings.php:79
+msgid "E-Mail Settings"
+msgstr "E-Mail Einstellungen"
+
+#: templates/page.backend.settings.php:83
+#: templates/page.backend.settings.php:84
+msgid "E-Mail for failure messages"
+msgstr "E-Mail Adresse für Fehler E-Mails"
+
+#: templates/page.backend.settings.php:91
+msgid "Last automatic cron run"
+msgstr "Zeitpunkt des letzten automatischen Abgleichs"
+
+#: templates/page.backend.settings.php:95
+msgid ""
+"Cron runs every 5 minutes. Here you can see the time of the last automatic "
+"cron run:"
+msgstr ""
+"Alle 5 Minuten findet ein automatischer Abgleich zwischen MRPacket und "
+"WordPress statt. Hier können Sie den Zeitpunkt des letzten -automatischen- "
+"Abgleichs sehen:"
+
+#: templates/page.backend.tracking.php:26
+msgid "Orders transferred to MRPacket"
+msgstr "An MRPacket übertragene Bestellungen"
+
+#: templates/page.backend.tracking.php:29
+msgid ""
+"<p>Below you can see all orders that have already been transferred from your "
+"shop to MRPacket. </p><strong>Please note:</strong><p>Orders must have the "
+"status \"paid / processed\" in your WooCommerce Shop to be transferred. <br /"
+">The transfer takes place automatically when the status changes. In "
+"addition, for the transfer, only orders that have already been received in "
+"your shop prior to the activation of the plugin will be considered!</p>"
+msgstr ""
+"<p>Nachfolgend sehen Sie alle Bestellungen, welche bisher von ihrem Shop an "
+"MRPacket erfolgreich übertragen wurden. </p><strong>Bitte beachten Sie:</"
+"strong><p>Bestellungen müssen in ihrem WooCommerce Shop den Status "
+"\"bezahlt / in Bearbeitung\" besitzen, um übertragen zu werden. <br />Der "
+"Transfer findet automatisiert im Hintergrund statt, wenn der Bestellstatus "
+"gewechselt wird. Zusätzlich werden für den Transfer ausschließlich "
+"Bestellungen berücksichtigt, die nach der initialen Aktivierung des MRPacket-"
+"Plugins in Ihrem Shop eingegangen sind!</p>"
+
+#: templates/page.backend.tracking.php:40
+msgid "Update list / send orders"
+msgstr "Liste aktualisieren / Paketentwürfe senden"
+
+#: templates/page.backend.tracking.php:43
+msgid "Cancel selected orders"
+msgstr "Paketentwürfe stornieren"
+
+#: templates/page.backend.tracking.php:46
+msgid "Re-enable selected orders"
+msgstr "Paketentwürfe erneut übertragen"
+
+#: templates/page.backend.tracking.php:49
+msgid "Archive selected orders"
+msgstr "Paketentwürfe archivieren"
+
+#: templates/page.backend.tracking.php:62
+msgid "ID"
+msgstr "ID"
+
+#: templates/page.backend.tracking.php:63
+msgid "PK"
+msgstr "MRPacket ID"
+
+#: templates/page.backend.tracking.php:64
+msgid "Order-ID"
+msgstr "ID-Bestellung"
+
+#: templates/page.backend.tracking.php:65
+msgid "Reference-ID"
+msgstr "Referenznr. Bestellung"
+
+#: templates/page.backend.tracking.php:66
+msgid "Order-Status"
+msgstr "Status"
+
+#: templates/page.backend.tracking.php:67
+msgid "Date created"
+msgstr "Erstelldatum"
+
+#: templates/page.backend.tracking.php:68
+msgid "Date changed"
+msgstr "Änderungsdatum"
+
+#~ msgid "<strong>Your Tracking-URL:</strong><br /> "
+#~ msgstr "<strong>Ihr Tracking-Link:</strong><br /> "
+
+#~ msgid "E-Mail address for notification e-mails on failures"
+#~ msgstr "E-Mail-Adresse für Benachrichtigungs-E-Mails bei Fehlern"
+
+#~ msgid "MRPacket-Bussiness Settings"
+#~ msgstr "MRPacket Einstellungen"
+
+#~ msgid "Add Tracking-Link to WooCommerce order E-Mails?"
+#~ msgstr ""
+#~ "MRPacket Tracking-Link zu den WooCommerce Standard-Bestell-E-Mails "
+#~ "hinzufügen?"
+
+#~ msgid " checked "
+#~ msgstr " checked "
+
+#~ msgid "Tracking-Code"
+#~ msgstr "Tracking-Code"
+
+#~ msgid "Tracking-URL"
+#~ msgstr "Tracking-URL"
+
+#~ msgid "Could not find any new orders for transfer. List seems up to date."
+#~ msgstr ""
+#~ "Es konnten keine neuen Bestellungen zur Übertragung an MRPacket-Business "
+#~ "mit erlaubtem Status (Vgl. Einstellungen) gefunden werden. Liste scheint "
+#~ "aktuell."
+
+#~ msgid "You do not have sufficient permissions to access this page."
+#~ msgstr "Sie haben nicht ausreichend Rechte um auf diese Seite zuzugreifen."
+
+#~ msgid "MRPacket-Business Tracking-List"
+#~ msgstr "MRPacket-Business - Übertragungsliste"
+
+#~ msgid "Your WooCommerce-Shop (via MRPacket-Plugin)"
+#~ msgstr "Ihr WooCommerce-Shop (via MRPacket-Plugin)"
+
+#~ msgid "Settings"
+#~ msgstr "Einstellungen"
+
+#~ msgid ""
+#~ "This controls the main heading contained within the email notification. "
+#~ "Leave blank to use the default heading: <code>%s</code>."
+#~ msgstr ""
+#~ "This controls the main heading contained within the email notification. "
+#~ "Leave blank to use the default heading: <code>%s</code>."
+
+#~ msgid "Plain text"
+#~ msgstr ""
+#~ "This controls the main heading contained within the email notification. "
+#~ "Leave blank to use the default heading: <code>%s</code>."
+
+#~ msgid "HTML"
+#~ msgstr "HTML"
+
+#~ msgid "Multipart"
+#~ msgstr "Multipart"

@@ -1,0 +1,38 @@
+{
+    "name": "mrpacket/wordpress",
+    "description": "The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.",
+    "type": "wordpress-plugin",
+    "keywords": ["mrpacket", "woocommerce", "parcel", "shipping", "logistic", "delivery", "courier", "wordpress", "plugin"],
+    "homepage": "https://www.mrpacket.de",
+    "authors": [
+        {
+            "name": "MRPacket",
+            "email": "info@mrpacket.de"
+        }
+    ],
+    "repositories": [{
+            "type": "vcs",
+            "url": "https://github.com/MRPacketDev/MRPacket-Connect"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tobiasgraeber/convertor"
+        }
+    ],
+    "require": {
+        "php": ">=7.3.0",
+        "mrpacket/mrpacket-connect": "dev-main",
+        "composer/installers": "~1.0",
+        "olifolkerd/convertor": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "MRPacketForWoo\\": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
+}
