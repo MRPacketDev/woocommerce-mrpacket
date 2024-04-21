@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MRPacket\n"
 "POT-Creation-Date: 2024-04-21 19:18+0200\n"
-"PO-Revision-Date: 2024-04-21 19:18+0200\n"
+"PO-Revision-Date: 2024-04-21 23:06+0200\n"
 "Last-Translator: \n"
 "Language-Team: MRPacket GmbH <info@mrpacket.com>\n"
 "Language: de_DE\n"
@@ -76,11 +76,11 @@ msgstr "Fehler bei der Vorbereitung des API Aufrufs"
 
 #: src/MRPacketCreate.php:341
 msgid "Exported"
-msgstr "Exported"
+msgstr "Exportiert"
 
 #: src/MRPacketCreate.php:348
 msgid "Successfully created parcel. Order ID: "
-msgstr "Paket erfolgreich an MRPacket übertragen! Paket-Id: "
+msgstr "Paket erfolgreich an MRPacket übertragen! Bestell-ID: "
 
 #: src/MRPacketCreate.php:364
 msgid ""
@@ -255,28 +255,28 @@ msgid ""
 msgstr ""
 "<p>Nachfolgend sehen Sie alle Bestellungen, welche bisher von ihrem Shop an "
 "MRPacket erfolgreich übertragen wurden. </p><strong>Bitte beachten Sie:</"
-"strong><p>Bestellungen müssen in ihrem WooCommerce Shop den Status "
-"\"bezahlt / in Bearbeitung\" besitzen, um übertragen zu werden. <br />Der "
-"Transfer findet automatisiert im Hintergrund statt, wenn der Bestellstatus "
-"gewechselt wird. Zusätzlich werden für den Transfer ausschließlich "
-"Bestellungen berücksichtigt, die nach der initialen Aktivierung des MRPacket-"
-"Plugins in Ihrem Shop eingegangen sind!</p>"
+"strong><p>Bestellungen müssen in ihrem WooCommerce Shop den Status besitzen "
+"welchen Sie in den Einstellungen ausgewählt haben, um übertragen zu werden. "
+"<br />Der Transfer findet automatisiert im Hintergrund statt, wenn der "
+"Bestellstatus gewechselt wird. Zusätzlich werden für den Transfer "
+"ausschließlich Bestellungen berücksichtigt, die nach der initialen "
+"Aktivierung des MRPacket-Plugins in Ihrem Shop eingegangen sind!</p>"
 
 #: templates/page.backend.tracking.php:40
 msgid "Update list / send orders"
-msgstr "Liste aktualisieren / Paketentwürfe senden"
+msgstr "Liste aktualisieren / Aufträge senden"
 
 #: templates/page.backend.tracking.php:43
 msgid "Cancel selected orders"
-msgstr "Paketentwürfe stornieren"
+msgstr "Aufträge stornieren"
 
 #: templates/page.backend.tracking.php:46
 msgid "Re-enable selected orders"
-msgstr "Paketentwürfe erneut übertragen"
+msgstr "Aufträge erneut übertragen"
 
 #: templates/page.backend.tracking.php:49
 msgid "Archive selected orders"
-msgstr "Paketentwürfe archivieren"
+msgstr "Aufträge archivieren"
 
 #: templates/page.backend.tracking.php:62
 msgid "ID"
@@ -288,7 +288,7 @@ msgstr "MRPacket ID"
 
 #: templates/page.backend.tracking.php:64
 msgid "Order-ID"
-msgstr "ID-Bestellung"
+msgstr "Bestellung-ID"
 
 #: templates/page.backend.tracking.php:65
 msgid "Reference-ID"

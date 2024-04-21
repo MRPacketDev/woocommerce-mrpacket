@@ -58,7 +58,7 @@
         <table id="dataTable" class="table table-striped table-bordered" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th><input type="checkbox" class="selectAll" name="selectAll" value="all"></th>
+                    <th style="text-align: center;"><input type="checkbox" class="selectAll" name="selectAll" value="all"></th>
                     <th><?php esc_html_e('ID', 'mrpacket'); ?></th>
                     <th><?php esc_html_e('PK', 'mrpacket'); ?></th>
                     <th><?php esc_html_e('Order-ID', 'mrpacket'); ?></th>

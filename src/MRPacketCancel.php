@@ -40,7 +40,7 @@ class MRPacketCancel
     {
         $pk = (int) $primaryKeyOfParcel;
         if (!$pk) {
-            return 'Parcial ID missing!.';
+            return;
         }
 
         try {
@@ -51,47 +51,31 @@ class MRPacketCancel
                 $this->plugin->helper->getMRPacketApiToken()
             );
 
-            $status = $contract->delete($pk);
-            if ($status['success']) {
-                $this->plugin->helper->db->update(
-                    MRPACKET_TABLE_TRACKING,
-                    array(
-                        'orderStatus'     => __('Removed', 'mrpacket'),
-                        'archive'         => 0,
-                    ),
-                    array('pk' => $pk),
-                    array(
-                        '%s',
-                        '%d',
-                        '%d',
-                    ),
-                    array(
-                        '%s',
-                        '%d',
-                        '%d'
-                    )
-                );
+            $contract->delete($pk);
+            $this->plugin->helper->db->update(
+                MRPACKET_TABLE_TRACKING,
+                array(
+                    'orderStatus'     => __('Removed', 'mrpacket'),
+                    'archive'         => 0,
+                ),
+                array('pk' => $pk),
+                array(
+                    '%s',
+                    '%d',
+                    '%d',
+                ),
+                array(
+                    '%s',
+                    '%d',
+                    '%d'
+                )
+            );
 
-                $this->plugin->helper->messages['success'][] = "Successfully deleted parcel with id $pk.";
-                if (ENVIRONMENT == 'DEV') {
-                    $this->plugin->helper->messages['success'][] = "(pretty printing parcel data)";
-                    $this->plugin->helper->messages['success'][] = "<pre>";
-                    $this->plugin->helper->messages['success'][] = print_r($status['data']);
-                    $this->plugin->helper->messages['success'][] = "</pre>";
-                }
-            } else {
-
-                $this->plugin->helper->messages['error'][] = "Failed to delete parcel with id $pk: <br/>";
-                if (is_array($status['errors'])) {
-                    foreach ($status['errors'] as $msg) {
-                        $this->plugin->helper->messages['error'][] =  $msg . "<br/>";
-                    }
-                }
-            }
+            $this->plugin->helper->messages['success'][] = "Successfully deleted packet with id $pk.";
         } catch (CrException $e) {
-            $this->plugin->helper->messages['error'][] = 'Parcel Not Found (404): ' . $e->getMessage();
-
+            $this->plugin->helper->writeLog('Error at deleting Packet ' . $pk . ' - ' . $e->getMessage());
             if ($e->getCode() == '404') {
+                $this->plugin->helper->messages['error'][] = 'Packet not found (404): ' . $e->getMessage();
                 $this->plugin->helper->db->update(
                     MRPACKET_TABLE_TRACKING,
                     array(
@@ -119,6 +103,7 @@ class MRPacketCancel
         } catch (Exception $e) {
             $this->plugin->helper->messages['error'][] = "Something else went terribly wrong: " . $e->getMessage() . "<br/>\n";
             $this->plugin->helper->messages['error'][] = 'Trace: ' . $e->getTraceAsString();
+            $this->plugin->helper->writeLog('Error at deleting Packet ' . $pk . ' - ' . $e->getMessage());
         }
     }
 }

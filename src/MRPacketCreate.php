@@ -212,38 +212,38 @@ class MRPacketCreate
 
 		$productCount = 0;
 		$orderPositions = $order->get_items() ? $order->get_items() : 0;
-		foreach ($orderPositions as $item_values) {
-			if ($this->plugin->helper->ignoreOrderItem($item_values)) {
+		foreach ($orderPositions as $position) {
+			if ($this->plugin->helper->ignoreOrderItem($position)) {
 				continue;
 			}
 
-			for ($i = 0; $i < $item_values->get_quantity(); $i++) {
+			for ($i = 0; $i < $position->get_quantity(); $i++) {
 				$from_unit_dimension = strtolower(get_option('woocommerce_dimension_unit', 'cm'));
-				if (($item_values->get_product()->get_length() != null) && ($item_values->get_product()->get_length() > 0)) {
-					$unitsConvertor->from($item_values->get_product()->get_length(), $from_unit_dimension);
+				if (($position->get_product()->get_length() != null) && ($position->get_product()->get_length() > 0)) {
+					$unitsConvertor->from($position->get_product()->get_length(), $from_unit_dimension);
 					$lengthInCm = $unitsConvertor->to('cm');
 					$orderData['products'][$productCount]['length']	= $lengthInCm  ?  $lengthInCm : null;
 				}
 
-				if (($item_values->get_product()->get_width() != null) && ($item_values->get_product()->get_width() > 0)) {
-					$unitsConvertor->from($item_values->get_product()->get_width(), $from_unit_dimension);
+				if (($position->get_product()->get_width() != null) && ($position->get_product()->get_width() > 0)) {
+					$unitsConvertor->from($position->get_product()->get_width(), $from_unit_dimension);
 					$widthInCm = $unitsConvertor->to('cm');
 					$orderData['products'][$productCount]['width']	= $widthInCm   ?  $widthInCm  : null;
 				}
 
-				if (($item_values->get_product()->get_height() != null) && ($item_values->get_product()->get_height() > 0)) {
-					$unitsConvertor->from($item_values->get_product()->get_height(), $from_unit_dimension);
+				if (($position->get_product()->get_height() != null) && ($position->get_product()->get_height() > 0)) {
+					$unitsConvertor->from($position->get_product()->get_height(), $from_unit_dimension);
 					$heighthInCm = $unitsConvertor->to('cm');
 					$orderData['products'][$productCount]['height']	= $heighthInCm  ?  $heighthInCm : null;
 				}
 
 				$weightInGram = false;
-				if (($item_values->get_product()->get_weight() != null) && ($item_values->get_product()->get_weight() > 0)) {
+				if (($position->get_product()->get_weight() != null) && ($position->get_product()->get_weight() > 0)) {
 					$from_unit_weight = strtolower(get_option('woocommerce_weight_unit', 'kg'));
 					if ($from_unit_weight == 'lbs') {
 						$from_unit_weight = 'lb';
 					}
-					$unitsConvertor->from($item_values->get_product()->get_weight(), $from_unit_weight);
+					$unitsConvertor->from($position->get_product()->get_weight(), $from_unit_weight);
 					$weightInGram = $unitsConvertor->to('g');
 				}
 				$orderData['products'][$productCount]['weight']	= $weightInGram ? $weightInGram : 0;
@@ -309,6 +309,11 @@ class MRPacketCreate
 			$this->status = $contract->create($requestObj);
 			if ($this->status['success']) {
 				$meta = $this->status['data']['meta'];
+
+				if (!array_key_exists('id', $meta)) {
+					throw new \Exception('Fehler beim Export ');
+				}
+
 				$mrpacketOrderId = $meta['id'];
 				if (is_array($this->ordersToReSubmit) && count($this->ordersToReSubmit) > 0) {
 					foreach ($this->ordersToReSubmit as $id => $orderId) {
@@ -352,6 +357,7 @@ class MRPacketCreate
 				$logRequest .= json_encode($this->status['data']);
 				$logRequest .= "</pre>";
 				$this->plugin->helper->writeLog($logRequest, 'success');
+				return;
 			}
 
 			if (is_array($this->status['errors'])) {

@@ -100,7 +100,7 @@ class Ajax
         $result = false;
         if (is_array($parcialData)) {
             $mrpacketCancel = new MRPacketCancel($this->plugin);
-            foreach ($parcialData as $row => $columns) {
+            foreach ($parcialData as $columns) {
                 $primaryKeyOfParcel = $columns[2];
                 $result = $mrpacketCancel->removeParcelFromMRPacket($primaryKeyOfParcel);
             }
@@ -116,7 +116,7 @@ class Ajax
         if (is_array($parcialData)) {
             $ordersToReSubmit = [];
             foreach ($parcialData as $row => $columns) {
-                if ($columns[7] == 'Canceled') {
+                if ($columns[5] == 'Canceled') {
                     $ordersToReSubmit[$columns[1]] = $columns[3];
                 } else {
                     unset($parcialData[$row]);
@@ -139,7 +139,7 @@ class Ajax
         if (is_array($parcialData)) {
             $ordersToArchive = [];
             foreach ($parcialData as $row => $columns) {
-                if ($columns[7] == 'Canceled') {
+                if ($columns[5] == 'Canceled') {
                     $ordersToArchive[$columns[1]] = $columns[3];
                 } else {
                     unset($parcialData[$row]);

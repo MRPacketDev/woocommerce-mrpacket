@@ -77,15 +77,11 @@ final class Plugin
 
 	private function define_frontend_hooks()
 	{
-
 		$plugin_frontend = new Frontend($this);
-
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_frontend, 'enqueue_styles');
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_frontend, 'enqueue_scripts');
-
 		$this->loader->add_action('mrpacket_cron_event', $plugin_frontend, 'mrpacketCron', 10, 1);
 	}
-
 
 	public function run()
 	{

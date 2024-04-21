@@ -70,16 +70,12 @@ class MRPacketHelper
 
     public function getMRPacketApiToken()
     {
-
         $this->pluginSettings = $this->getPluginSettings();
 
         if (!isset($this->pluginSettings['mrpacket_api_token']) || empty($this->pluginSettings['mrpacket_api_token'])) {
-
             $this->messages['error'][] = __('Error: Auth Token is missing! Please go to WooCommerce > Settings > MRPacket plugin settings, and enter your MRPacket username and passwort to get one!', 'mrpacket');
-
             $this->writeLog(__('Error: Auth Token is missing! Please go to WooCommerce > Settings > MRPacket plugin settings, and enter your MRPacket username and passwort to get one!', 'mrpacket'), 'error');
         } else if (isset($this->pluginSettings['mrpacket_api_token']) && !empty($this->pluginSettings['mrpacket_api_token'])) {
-
             return $this->pluginSettings['mrpacket_api_token'];
         }
 
@@ -172,48 +168,14 @@ class MRPacketHelper
         $res = wp_mail($recipients, $subject, $message, $headers);
     }
 
-    public function getOrderNetValueFromProducts($orderPositions)
+    public function ignoreOrderItem($item)
     {
+        $productId = $item->get_product_id();
+        $product = wc_get_product($productId);
 
-        $net_value = 0;
-        foreach ($orderPositions as $item_key => $item_values) {
-
-            if ($this->ignoreOrderItem($item_values)) {
-                continue;
-            }
-
-            $price = round($item_values->get_subtotal(), 2);
-
-            $net_value += $price > 0 ? $price : 0;
+        if (is_bool($product)) {
+            return true;
         }
-
-        return $net_value;
-    }
-
-    public function getOrderTaxValueFromProducts($orderPositions)
-    {
-
-        $tax_value = 0;
-        foreach ($orderPositions as $item_key => $item_values) {
-
-            if ($this->ignoreOrderItem($item_values)) {
-                continue;
-            }
-
-            $price = round($item_values->get_subtotal() + $item_values->get_subtotal_tax(), 2);
-
-            $tax_value += $price > 0 ? $price : 0;
-        }
-
-        return $tax_value;
-    }
-
-    public function ignoreOrderItem($item_values)
-    {
-
-
-        $product_id = $item_values->get_product_id();
-        $product = wc_get_product($product_id);
 
         if ($product->is_virtual() == 'yes') {
             return true;
@@ -224,16 +186,13 @@ class MRPacketHelper
 
     public function showNotices($messages = '')
     {
-
         if (!$messages) {
             $messages = $this->messages;
         }
 
         if (is_array($messages) && count($messages) > 0) {
             foreach ($messages as $type => $message) {
-
-                foreach ($message as $key => $value) {
-
+                foreach ($message as $value) {
                     switch ($type) {
                         case 'error':
                             $class = 'notice notice-error is-dismissible';
@@ -258,7 +217,6 @@ class MRPacketHelper
             }
         }
     }
-
 
     function writeLog($log, $type = null)
     {

@@ -66,7 +66,6 @@ class Frontend
 				do_action('show_mrpacket_notices', $mrpacketCreate->plugin->helper->messages);
 			}
 		}
-		do_action('show_mrpacket_notices', "Cron Run");
 
 		$date = new DateTime();
 		$dateNow = $date->setTimezone(new DateTimeZone($this->helper->getDefaultTimezoneString()))->format('Y-m-d H:i:s');

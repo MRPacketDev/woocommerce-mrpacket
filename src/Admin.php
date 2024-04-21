@@ -25,11 +25,8 @@ require_once(__DIR__ . DIRECTORY_SEPARATOR . 'constants.php');
 
 class Admin
 {
-
 	protected $plugin;
-
 	protected $db;
-
 	public $helper;
 
 	public function __construct(Plugin $plugin)
@@ -56,18 +53,16 @@ class Admin
 
 	public function enqueue_styles()
 	{
-
 		if (!$this->inPluginContext()) {
 			return;
 		}
 
-		\wp_register_style($this->plugin->get_name() . '-admin', \plugin_dir_url(dirname(__FILE__)) . 'assets/scss/mrpacket.css', array(), $this->plugin->get_version());
+		\wp_register_style($this->plugin->get_name() . '-admin', \plugin_dir_url(dirname(__FILE__)) . 'assets/css/mrpacket.css', array(), $this->plugin->get_version());
 		\wp_enqueue_style($this->plugin->get_name() . '-admin');
 	}
 
 	public function enqueue_scripts()
 	{
-
 		if (!$this->inPluginContext()) {
 			return;
 		}
@@ -122,11 +117,9 @@ class Admin
 
 	function add_action_links($links)
 	{
-
 		$links[] = '<a href="' . admin_url('admin.php?page=wc-settings&tab=mrpacket_tab') . '">' . __('MRPacket Settings', 'mrpacket') . '</a>';
 		return $links;
 	}
-
 
 	public function mrpacket_plugin_menu()
 	{
