@@ -275,7 +275,6 @@ class MRPacketHelper
     {
         $this->resetCrSettingsAdminMail();
         $this->resetCrSettingsApiToken();
-        $this->resetCrSettingsTrackingMail();
     }
 
     public function resetCrSettingsAdminMail()

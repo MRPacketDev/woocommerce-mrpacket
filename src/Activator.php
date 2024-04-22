@@ -61,7 +61,7 @@ class Activator
 
 		$charset_collate = $this->db->get_charset_collate();
 
-		$sql = "CREATE TABLE " . MRPACKET_TABLE_TRACKING . " (
+		$sql = "CREATE TABLE IF NOT EXISTS " . MRPACKET_TABLE_TRACKING . " (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			pk mediumint(9) NOT NULL,
 			orderId mediumint(9) NOT NULL,
@@ -76,7 +76,7 @@ class Activator
 
 		dbDelta($sql);
 
-		$sql = "CREATE TABLE " . MRPACKET_TABLE_SETTINGS . " (
+		$sql = "CREATE TABLE IF NOT EXISTS " . MRPACKET_TABLE_SETTINGS . " (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			cName tinytext NOT NULL,
 			cValue tinytext NOT NULL,
@@ -112,7 +112,7 @@ class Activator
 
 		$this->db->query($sql);
 
-		$sql = "CREATE TABLE " . MRPACKET_TABLE_LOGGING . " (
+		$sql = "CREATE TABLE IF NOT EXISTS " . MRPACKET_TABLE_LOGGING . " (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			type tinytext NOT NULL,
 			message text NOT NULL,
