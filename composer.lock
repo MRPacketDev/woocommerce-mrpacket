@@ -163,12 +163,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/MRPacketDev/MRPacket-Connect.git",
-                "reference": "6c7d599ef1d2cc80e01d5f653c874ebc2b82c753"
+                "reference": "b92d21502ada89e20dd1a5554ad1de4f814449f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MRPacketDev/MRPacket-Connect/zipball/6c7d599ef1d2cc80e01d5f653c874ebc2b82c753",
-                "reference": "6c7d599ef1d2cc80e01d5f653c874ebc2b82c753",
+                "url": "https://api.github.com/repos/MRPacketDev/MRPacket-Connect/zipball/b92d21502ada89e20dd1a5554ad1de4f814449f7",
+                "reference": "b92d21502ada89e20dd1a5554ad1de4f814449f7",
                 "shasum": ""
             },
             "require": {
@@ -192,7 +192,7 @@
                 "source": "https://github.com/MRPacketDev/MRPacket-Connect/tree/main",
                 "issues": "https://github.com/MRPacketDev/MRPacket-Connect/issues"
             },
-            "time": "2024-04-21T21:52:48+00:00"
+            "time": "2024-04-22T21:26:20+00:00"
         },
         {
             "name": "olifolkerd/convertor",
