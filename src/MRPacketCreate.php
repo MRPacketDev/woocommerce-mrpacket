@@ -76,7 +76,6 @@ class MRPacketCreate
 	public function addOrdersToResubmit($ordersToReSubmit)
 	{
 		$this->ordersToReSubmit = [];
-
 		$this->ordersToReSubmit = $ordersToReSubmit;
 	}
 
@@ -321,21 +320,7 @@ class MRPacketCreate
 							continue;
 						}
 
-						$this->plugin->helper->db->update(
-							MRPACKET_TABLE_TRACKING,
-							array(
-								'archive' => 1,
-							),
-							array('id' => $id),
-							array(
-								'%d',
-								'%d',
-							),
-							array(
-								'%d',
-								'%d'
-							)
-						);
+						$this->plugin->helper->archivePacket($id);
 					}
 				}
 

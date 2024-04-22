@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MRPacket\n"
-"POT-Creation-Date: 2024-04-21 19:18+0200\n"
-"PO-Revision-Date: 2024-04-21 23:06+0200\n"
+"POT-Creation-Date: 2024-04-22 23:19+0200\n"
+"PO-Revision-Date: 2024-04-22 23:19+0200\n"
 "Last-Translator: \n"
 "Language-Team: MRPacket GmbH <info@mrpacket.com>\n"
 "Language: de_DE\n"
@@ -19,15 +19,15 @@ msgstr ""
 "X-Poedit-SearchPath-1: assets\n"
 "X-Poedit-SearchPath-2: templates\n"
 
-#: src/Admin.php:126 src/Admin.php:154 src/Admin.php:155 src/Settings.php:56
+#: src/Admin.php:120 src/Admin.php:147 src/Admin.php:148 src/Settings.php:56
 msgid "MRPacket Settings"
 msgstr "MRPacket Einstellungen"
 
-#: src/Admin.php:140 src/Admin.php:141
+#: src/Admin.php:133 src/Admin.php:134
 msgid "MRPacket Tracking"
 msgstr "MRPacket Tracking"
 
-#: src/Admin.php:164 src/Settings.php:39
+#: src/Admin.php:157 src/Settings.php:39
 msgid ""
 "You dont have permission to manage options. Please contact site "
 "administrator. You need the capability (access right) \\'edit_mrpacket\\'."
@@ -36,11 +36,15 @@ msgstr ""
 "kontaktieren Sie den Administrator dieser Seite. Sie benötigen das "
 "Zugriffsrecht \\'edit_mrpacket\\'."
 
-#: src/Admin.php:172 src/Settings.php:83
+#: src/Admin.php:165 src/Settings.php:83
 msgid "Sorry, your nonce was not correct. Please try again."
 msgstr ""
 "Entschuldigung, die Prüfsumme ihrer Anfrage war nicht korrekt. Bitte "
 "versuchen Sie es erneut oder wenden Sie sich an den Administrator."
+
+#: src/Ajax.php:118 src/Ajax.php:141 src/MRPacketCancel.php:82
+msgid "Canceled"
+msgstr "Abgebrochen"
 
 #: src/I18n.php:35
 msgid "MRPacket"
@@ -54,13 +58,9 @@ msgstr ""
 "Mit dem MRPacket-Plugin können Sie Bestelldaten von Ihrem WooCommerce-Shop "
 "direkt an MRPacket übertragen."
 
-#: src/MRPacketCancel.php:59
+#: src/MRPacketCancel.php:58
 msgid "Removed"
 msgstr "Entfernt"
-
-#: src/MRPacketCancel.php:98
-msgid "Canceled"
-msgstr "Abgebrochen"
 
 #: src/MRPacketCreate.php:55
 msgid ""
@@ -74,15 +74,15 @@ msgstr ""
 msgid "Error Message: Error while preparing package/oder data for API-call"
 msgstr "Fehler bei der Vorbereitung des API Aufrufs"
 
-#: src/MRPacketCreate.php:341
+#: src/MRPacketCreate.php:331
 msgid "Exported"
 msgstr "Exportiert"
 
-#: src/MRPacketCreate.php:348
+#: src/MRPacketCreate.php:338
 msgid "Successfully created parcel. Order ID: "
 msgstr "Paket erfolgreich an MRPacket übertragen! Bestell-ID: "
 
-#: src/MRPacketCreate.php:364
+#: src/MRPacketCreate.php:355
 msgid ""
 "Connection/Parcel create error. Please check the shop-admins E-Mail inbox "
 "for details."
@@ -90,7 +90,7 @@ msgstr ""
 "Verbindungsfehler. Bitte prüfen Sie das Postfach der E-Mail Adresse die Sie "
 "in den MRPacket-Plugin-Einstellungen hinterlegt haben."
 
-#: src/MRPacketCreate.php:369
+#: src/MRPacketCreate.php:360
 msgid ""
 "Your Token seems to be invalid. Please go to the WooCommerce > Settings > "
 "MRPacket plugin settings dialogue and request a new one by entering your "
@@ -100,7 +100,7 @@ msgstr ""
 "die Einstellungen des MRPacket-Plugins und fordern Sie einen neuen Token "
 "durch Eingabe ihrer E-Mail Adresse (Benutzername) und Passwort an."
 
-#: src/MRPacketHelper.php:78 src/MRPacketHelper.php:80
+#: src/MRPacketHelper.php:76 src/MRPacketHelper.php:77
 msgid ""
 "Error: Auth Token is missing! Please go to WooCommerce > Settings > MRPacket "
 "plugin settings, and enter your MRPacket username and passwort to get one!"
@@ -109,7 +109,7 @@ msgstr ""
 "> MRPacket Einstellungen. Geben Sie hier ihren MRPacket Benutzernamen (E-"
 "Mail) und Ihr Passwort ein, um einen neuen Token anzufordern!"
 
-#: src/MRPacketHelper.php:140
+#: src/MRPacketHelper.php:136
 msgid ""
 "Error sending mrpacket failure-mail: No valid email address set in mrpacket-"
 "plugin settings."
@@ -117,15 +117,15 @@ msgstr ""
 "Fehler beim senden der MRPacket-Fehler E-Mail. Keine valide E-Mail Adresse "
 "in den MRPacket-Plugin Einstellungen hinterlegt."
 
-#: src/MRPacketHelper.php:148 src/MRPacketHelper.php:153
+#: src/MRPacketHelper.php:144 src/MRPacketHelper.php:149
 msgid "WooCommerce: MRPacket-Plugin API-Error"
 msgstr "WooCommerce: MRPacket-Plugin API-Fehler aufgetreten"
 
-#: src/MRPacketHelper.php:155
+#: src/MRPacketHelper.php:151
 msgid "Dear Shop Owner,"
 msgstr "Sehr geehrter Shopbetreiber,"
 
-#: src/MRPacketHelper.php:157
+#: src/MRPacketHelper.php:153
 #, php-format
 msgid ""
 "a transfer of orders to the mrpacket backend by the \"%1$s\"-plugin failed."
@@ -133,25 +133,29 @@ msgstr ""
 "eine Übertragung von Bestellungen an MRPacket durch das \"%1$s\"-Plugin "
 "schlug fehlt."
 
-#: src/MRPacketHelper.php:159
+#: src/MRPacketHelper.php:155
 msgid "To start the transfer again, please click here:"
 msgstr "Um die Übertragung erneut zu starten, klicken Sie bitte hier:"
 
-#: src/MRPacketHelper.php:161
+#: src/MRPacketHelper.php:157
 msgid "Restart Transmission"
 msgstr "Übertragung erneut starten"
 
-#: src/MRPacketHelper.php:163
+#: src/MRPacketHelper.php:159
 msgid "Please do not reply to this automatically generated email."
 msgstr "Bitte antworten Sie nicht auf diese automatisch generierte E-Mail."
 
-#: src/MRPacketHelper.php:165
+#: src/MRPacketHelper.php:161
 msgid "Sincerely, "
 msgstr "Mit freundlichen Grüßen, "
 
-#: src/MRPacketHelper.php:166
+#: src/MRPacketHelper.php:162
 msgid "Your MRPacket-Plugin"
 msgstr "Ihr MRPacket Plugin"
+
+#: src/MRPacketHelper.php:309
+msgid "Archived"
+msgstr "Archiviert"
 
 #: src/MRPacketToken.php:44
 msgid ""

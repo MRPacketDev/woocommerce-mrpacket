@@ -220,7 +220,6 @@ class MRPacketHelper
 
     function writeLog($log, $type = null)
     {
-
         if (!$log) {
             return;
         }
@@ -300,5 +299,27 @@ class MRPacketHelper
         }
 
         return null;
+    }
+
+    public function archivePacket($id)
+    {
+        $this->db->update(
+            MRPACKET_TABLE_TRACKING,
+            array(
+                'orderStatus'     => __('Archived', 'mrpacket'),
+                'archive'         => 1,
+            ),
+            array('id' => $id),
+            array(
+                '%s',
+                '%d',
+                '%d',
+            ),
+            array(
+                '%s',
+                '%d',
+                '%d'
+            )
+        );
     }
 }

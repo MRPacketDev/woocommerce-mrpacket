@@ -97,16 +97,15 @@ class Ajax
     public function cancel_partial()
     {
         $parcialData = $_REQUEST['parcialData'];
-        $result = false;
         if (is_array($parcialData)) {
             $mrpacketCancel = new MRPacketCancel($this->plugin);
             foreach ($parcialData as $columns) {
                 $primaryKeyOfParcel = $columns[2];
-                $result = $mrpacketCancel->removeParcelFromMRPacket($primaryKeyOfParcel);
+                $mrpacketCancel->removeParcelFromMRPacket($primaryKeyOfParcel);
             }
         }
 
-        wp_send_json_success($result);
+        wp_send_json_success();
         die();
     }
 
@@ -116,7 +115,7 @@ class Ajax
         if (is_array($parcialData)) {
             $ordersToReSubmit = [];
             foreach ($parcialData as $row => $columns) {
-                if ($columns[5] == 'Canceled') {
+                if ($columns[5] == 'Canceled' || $columns[5] == __('Canceled', 'mrpacket')) {
                     $ordersToReSubmit[$columns[1]] = $columns[3];
                 } else {
                     unset($parcialData[$row]);
@@ -139,7 +138,7 @@ class Ajax
         if (is_array($parcialData)) {
             $ordersToArchive = [];
             foreach ($parcialData as $row => $columns) {
-                if ($columns[5] == 'Canceled') {
+                if ($columns[5] == 'Canceled' || $columns[5] == __('Canceled', 'mrpacket')) {
                     $ordersToArchive[$columns[1]] = $columns[3];
                 } else {
                     unset($parcialData[$row]);
@@ -148,27 +147,13 @@ class Ajax
 
             if (is_array($ordersToArchive) && (count($ordersToArchive) > 0)) {
                 foreach ($ordersToArchive as $id => $orderId) {
-
-                    $this->plugin->helper->db->update(
-                        MRPACKET_TABLE_TRACKING,
-                        array(
-                            'archive' => 1,
-                        ),
-                        array('id' => $id),
-                        array(
-                            '%d',
-                            '%d',
-                        ),
-                        array(
-                            '%d',
-                            '%d'
-                        )
-                    );
+                    $this->plugin->helper->archivePacket($id);
 
                     $this->plugin->helper->messages['warning'][] = 'Order with ID: "' . $orderId . '" archived!';
                 }
             }
         }
+
         wp_send_json_success();
         die();
     }
