@@ -73,13 +73,13 @@
                 <?php foreach ($mrpacketData as $key => $value) { ?>
                     <tr>
                         <td></td>
-                        <td><?php esc_html_e($value->id) ?></td>
-                        <td><?php esc_html_e($value->pk) ?></td>
-                        <td><?php esc_html_e($value->orderId) ?></td>
-                        <td><?php esc_html_e($value->orderReference) ?></td>
-                        <td><?php esc_html_e($value->orderStatus) ?></td>
-                        <td><?php esc_html_e($value->dCreated) ?></td>
-                        <td><?php esc_html_e($value->dChanged) ?></td>
+                        <td><?php echo $value->id ?></td>
+                        <td><?php echo $value->pk ?></td>
+                        <td><?php echo $value->orderId ?></td>
+                        <td><?php echo $value->orderReference ?></td>
+                        <td><?php echo $value->orderStatus ?></td>
+                        <td><?php echo $value->dCreated ?></td>
+                        <td><?php echo $value->dChanged ?></td>
                     </tr>
                 <?php } ?>
             </tbody>

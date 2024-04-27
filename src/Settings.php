@@ -62,7 +62,6 @@ class Settings
     {
         $resetSettings = isset($_POST['mrpacket_reset_settings']) ? (int) $_POST['mrpacket_reset_settings'] : 0;
         if ($resetSettings === 1) {
-
             $this->helper->resetCrSettings();
         }
 

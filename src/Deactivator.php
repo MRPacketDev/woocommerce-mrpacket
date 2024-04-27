@@ -25,10 +25,8 @@ require_once(__DIR__ . DIRECTORY_SEPARATOR . 'constants.php');
 
 class Deactivator
 {
-
 	public static function deactivate()
 	{
-
 		wp_clear_scheduled_hook('mrpacket_cron_event');
 	}
 }

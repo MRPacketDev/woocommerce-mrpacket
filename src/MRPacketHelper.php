@@ -35,7 +35,6 @@ class MRPacketHelper
     public $shopFrameWorkVersion;
     public $shopModuleVersion;
     public $pluginSettings;
-
     public $db;
     public $pluginInfo;
     public $pluginAdminUrl;
@@ -87,7 +86,6 @@ class MRPacketHelper
         $this->shopFrameWorkName    = $this->plugin->get_shopframework();
         $this->shopFrameWorkVersion = get_option('woocommerce_version');
         $this->shopModuleVersion    = $this->plugin->get_version();
-
         $this->pluginAdminUrl       = admin_url('admin.php?page=mrpacket');
 
         $this->pluginInfo = array(
@@ -150,7 +148,7 @@ class MRPacketHelper
                 </head>
                 <body>' . __('Dear Shop Owner,', 'mrpacket') . ' <br><br>
                     
-                    <p>' . sprintf(esc_html__('a transfer of orders to the mrpacket backend by the "%1$s"-plugin failed.', 'mrpacket'), $this->pluginInfo['shopFrameWorkName']) . '</p>
+                    <p>' . esc_html__('a transfer of orders to the mrpacket backend by the plugin failed.', 'mrpacket') . '</p>
         
                     <p><strong>' . __('To start the transfer again, please click here:', 'mrpacket') . '</strong></p>
 
@@ -210,9 +208,7 @@ class MRPacketHelper
                             $class = 'notice notice-info is-dismissible';
                             break;
                     }
-
-                    $message = __($value, 'mrpacket');
-                    printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($message));
+                    printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($value));
                 }
             }
         }
@@ -230,12 +226,9 @@ class MRPacketHelper
 
         $date = new DateTime();
         $dateNow = $date->setTimezone(new DateTimeZone($this->getDefaultTimezoneString()))->format('Y-m-d H:i:s');
-
         if (is_array($log) || is_object($log)) {
-
-            $message = json_encode($log);
+            $message = wp_json_encode($log);
         } else {
-
             $message = $log;
         }
 

@@ -26,9 +26,7 @@ require_once(__DIR__ . DIRECTORY_SEPARATOR . 'constants.php');
 use MRPacket\Connect\Contract;
 use MRPacket\Connect\ContractPacket;
 use MRPacket\CrException;
-
 use Olifolkerd\Convertor\Convertor;
-
 use DateTime;
 use DateTimeZone;
 use Exception;
@@ -65,8 +63,8 @@ class MRPacketCreate
 
 						$this->sendOrderToMRPacket($orderData);
 					} catch (Exception $e) {
-						$this->plugin->helper->messages['error'][] = __('Error Message: Error while preparing package/oder data for API-call'  . $e->getMessage(), 'mrpacket');
-						$this->plugin->helper->writeLog('Error Message: Error while preparing package/oder data for API-call'  . $e->getMessage(), 'error');
+						$this->plugin->helper->messages['error'][] = __('Error Message: Error while preparing package/oder data for API-call:', 'mrpacket') . $e->getMessage();
+						$this->plugin->helper->writeLog('Error Message: Error while preparing package/oder data for API-call:'  . $e->getMessage(), 'error');
 					}
 				}
 			}
@@ -324,13 +322,16 @@ class MRPacketCreate
 					}
 				}
 
+				$dateCreated = new DateTime();
+				$dateChanged = new DateTime();
+				$timeZone = $this->plugin->helper->getDefaultTimezoneString();
 				$this->plugin->helper->db->insert(MRPACKET_TABLE_TRACKING, array(
 					'pk' 				=> $this->status['data']['id'],
 					'orderId' 			=> $mrpacketOrderId,
 					'orderReference'	=> $meta['reference'],
 					'orderStatus'		=> __('Exported', 'mrpacket'),
-					'dCreated'			=> date('Y-m-d H:i:s'),
-					'dChanged'			=> date('Y-m-d H:i:s'),
+					'dCreated'			=> $dateCreated->setTimezone(new DateTimeZone($timeZone))->format('Y-m-d H:i:s'),
+					'dChanged'			=> $dateChanged->setTimezone(new DateTimeZone($timeZone))->format('Y-m-d H:i:s'),
 					'archive'           => 0,
 				));
 
@@ -339,7 +340,7 @@ class MRPacketCreate
 
 				$logRequest = "(pretty printing parcel data)";
 				$logRequest .= "<pre>";
-				$logRequest .= json_encode($this->status['data']);
+				$logRequest .= wp_json_encode($this->status['data']);
 				$logRequest .= "</pre>";
 				$this->plugin->helper->writeLog($logRequest, 'success');
 				return;

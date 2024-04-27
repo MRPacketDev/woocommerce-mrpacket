@@ -72,7 +72,7 @@ final class Plugin
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
 		$this->loader->add_action('admin_menu', $plugin_admin, 'mrpacket_plugin_menu');
 		$this->loader->add_action('show_mrpacket_notices', $this->helper, 'showNotices', 10, 1);
-		$this->loader->add_filter('plugin_action_links_woocommerce_mrpacket/mrpacket.php', $plugin_admin, 'add_action_links', 10, 5);
+		$this->loader->add_filter('plugin_action_links_mrpacket/mrpacket.php', $plugin_admin, 'add_action_links', 10, 5);
 	}
 
 	private function define_frontend_hooks()
