@@ -4,7 +4,7 @@
  * MRPacket
  * The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
  * 
- * @version 0.0.1
+ * @version 1.0.0
  * @link https://www.mrpacket.de/api
  * @license GPLv2
  * @author MRPacket <info@mrpacket.de>
@@ -24,7 +24,7 @@
             <?php if ($token) { ?>
                 <tr>
                     <th><label for="mrpacket_api_token"><?php esc_html_e('MRPacket API-Token', 'mrpacket'); ?></label></th>
-                    <td><input disabled autocomplete="off" name="mrpacket_api_token" id="mrpacket_api_token" type="text" value="<?php echo esc_html(get_option('mrpacket_api_token')); ?>" class="regular-text" /></td>
+                    <td><input disabled autocomplete="off" name="mrpacket_api_token" id="mrpacket_api_token" type="text" value="<?php echo esc_attr(get_option('mrpacket_api_token')); ?>" class="regular-text" /></td>
                 </tr>
 
                 <!-- Reset-Settings Button -->
@@ -81,7 +81,7 @@
         <tbody>
             <tr>
                 <th><label for="mrpacket_admin_email"><?php esc_html_e('E-Mail for failure messages', 'mrpacket'); ?></label></th>
-                <td><input placeholder="<?php esc_html_e('E-Mail for failure messages', 'mrpacket'); ?>" autocomplete="off" name="mrpacket_admin_email" id="mrpacket_admin_email" type="email" value="<?php echo esc_html(get_option('mrpacket_admin_email')); ?>" class="regular-text" /></td>
+                <td><input placeholder="<?php esc_html_e('E-Mail for failure messages', 'mrpacket'); ?>" autocomplete="off" name="mrpacket_admin_email" id="mrpacket_admin_email" type="email" value="<?php echo esc_attr(get_option('mrpacket_admin_email')); ?>" class="regular-text" /></td>
             </tr>
         </tbody>
     </table>
@@ -93,7 +93,7 @@
         <tbody>
             <tr>
                 <th><label for="mrpacket_cron_last_run"><?php esc_html_e('Cron runs every 5 minutes. Here you can see the time of the last automatic cron run:', 'mrpacket'); ?></label></th>
-                <td><input disabled autocomplete="off" name="mrpacket_cron_last_run" id="mrpacket_cron_last_run" type="text" value="<?php echo esc_html($mrpacket_cron_last_run); ?>" class="regular-text" /></td>
+                <td><input disabled autocomplete="off" name="mrpacket_cron_last_run" id="mrpacket_cron_last_run" type="text" value="<?php echo esc_attr($mrpacketCronLastRun); ?>" class="regular-text" /></td>
             </tr>
         </tbody>
     </table>

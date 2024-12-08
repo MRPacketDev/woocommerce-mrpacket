@@ -4,8 +4,8 @@
  * MRPacket
  * The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
  * 
- * @version 0.0.1
- * @link https://www.mrpacket.de
+ * @version 1.0.0
+ * @link https://www.mrpacket.de/api
  * @license GPLv2
  * @author MRPacket <info@mrpacket.de>
  * 
@@ -20,23 +20,28 @@ if (!defined('ABSPATH') || !defined('WPINC')) {
 	exit;
 }
 
+
 require_once(dirname(__DIR__) . DIRECTORY_SEPARATOR .  'vendor'  . DIRECTORY_SEPARATOR . 'autoload.php');
 require_once(__DIR__ . DIRECTORY_SEPARATOR . 'constants.php');
 
 use MRPacket\Connect\Contract;
-use MRPacket\Connect\ContractPacket;
 use MRPacket\CrException;
 use Olifolkerd\Convertor\Convertor;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use MRPacket\Connect\ContractPacket;
+use MRPacketForWoo\Enums\OrderStatus;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 
 class MRPacketCreate
 {
+
 	public $shopFrameWorkName;
 	public $shopFrameWorkVersion;
 	public $shopModuleVersion;
 	public $plugin;
+
 	public $status;
 	public $ordersToReSubmit = [];
 
@@ -49,22 +54,18 @@ class MRPacketCreate
 	{
 		if ($this->plugin->helper->getMRPacketApiToken()) {
 			$orders = $this->getOrdersToSendToMRPacket();
-			if (!$orders || !is_array($orders)) {
+
+			if (!$orders) {
 				$this->plugin->helper->messages['info'][] = __('No new orders could be found for transfer to MRPacket business with allowed status (See Settings). List is up to date.', 'mrpacket');
 				$this->plugin->helper->writeLog($this->plugin->helper->messages, 'error');
-				return;
-			}
-
-			if (count($orders) > 0) {
+			} else if (is_array($orders) && count($orders) > 0) {
 				foreach ($orders as $order) {
 					try {
 						$encodedObject = $this->plugin->helper->convertToUtf8($order);
-						$orderData = $this->prepareOrderForMRPacketApi($encodedObject);
-
-						$this->sendOrderToMRPacket($orderData);
+						$this->sendOrderToMRPacketBusinessBackend($this->prepareOrderForMRPacketApi($encodedObject));
 					} catch (Exception $e) {
-						$this->plugin->helper->messages['error'][] = __('Error Message: Error while preparing package/oder data for API-call:', 'mrpacket') . $e->getMessage();
-						$this->plugin->helper->writeLog('Error Message: Error while preparing package/oder data for API-call:'  . $e->getMessage(), 'error');
+						$this->plugin->helper->messages['error'][] = __('Error Message: Error while preparing package/oder data for API-call', 'mrpacket')  . $e->getMessage();
+						$this->plugin->helper->writeLog('Fehlermeldung: Fehler beim Vorbereiten der Paketdaten für den API-Aufruf: '  . $e->getMessage(), 'error');
 					}
 				}
 			}
@@ -74,6 +75,7 @@ class MRPacketCreate
 	public function addOrdersToResubmit($ordersToReSubmit)
 	{
 		$this->ordersToReSubmit = [];
+
 		$this->ordersToReSubmit = $ordersToReSubmit;
 	}
 
@@ -89,33 +91,45 @@ class MRPacketCreate
 		$date = new DateTime($pluginInstallationDate,  new DateTimeZone($this->plugin->helper->getDefaultTimezoneString()));
 		$pluginInstallationDateTimestamp = esc_sql($date->format('Y-m-d H:i:s'));
 
-		$mrpacketOrderStatus = get_option('orderstatus', array('wc-processing'));
-		if (!is_array($mrpacketOrderStatus) || $mrpacketOrderStatus[0] == '999') {
+		$orderStatusSettings = get_option('orderstatus', array('wc-processing'));
+		if (!is_array($orderStatusSettings) || $orderStatusSettings[0] == '999') {
 			return;
 		}
 
-		$trackingTableName = MRPACKET_TABLE_TRACKING;
-		$ordersToSubmit = $wpdb->get_results("(SELECT {$wpdb->prefix}posts.ID 
-												FROM {$wpdb->prefix}posts 
-												LEFT JOIN {$trackingTableName} ON {$trackingTableName}.orderId = {$wpdb->prefix}posts.ID
-													WHERE {$wpdb->prefix}posts.post_status IN ('" . implode("','", $mrpacketOrderStatus) . "') 
-														AND UNIX_TIMESTAMP({$wpdb->prefix}posts.post_date) >= UNIX_TIMESTAMP('" . $pluginInstallationDateTimestamp . "')
-														AND UNIX_TIMESTAMP({$wpdb->prefix}posts.post_date) < CURRENT_TIMESTAMP
-														AND {$wpdb->prefix}posts.post_type = 'shop_order'
-														AND {$trackingTableName}.orderId IS NULL
-												GROUP BY {$wpdb->prefix}posts.ID
-											) UNION (
-												SELECT {$wpdb->prefix}wc_orders.ID FROM {$wpdb->prefix}wc_orders
-												LEFT JOIN {$trackingTableName} ON {$trackingTableName}.orderId = {$wpdb->prefix}wc_orders.ID
-													WHERE {$wpdb->prefix}wc_orders.status IN ('" . implode("','", $mrpacketOrderStatus) . "') 
-														AND UNIX_TIMESTAMP({$wpdb->prefix}wc_orders.date_created_gmt) >= UNIX_TIMESTAMP('" . $pluginInstallationDateTimestamp . "')
-														AND UNIX_TIMESTAMP({$wpdb->prefix}wc_orders.date_created_gmt) < CURRENT_TIMESTAMP
-														AND {$wpdb->prefix}wc_orders.type = 'shop_order'
-														AND {$trackingTableName}.orderId IS NULL
-												GROUP BY {$wpdb->prefix}wc_orders.ID
-											)");
+		$trackingTableName = esc_sql(MRPACKET_TABLE_TRACKING);
+		if (OrderUtil::custom_orders_table_usage_is_enabled()) {
+			$postsTableName = esc_sql($wpdb->prefix . "wc_orders");
+			$query = "
+			SELECT orders.ID
+			FROM %i AS orders
+			LEFT JOIN %i AS tracking ON tracking.orderId = orders.ID
+			WHERE orders.status IN (" . implode(',', array_fill(0, count($orderStatusSettings), '%s')) . ")
+				AND UNIX_TIMESTAMP(orders.date_created_gmt) >= UNIX_TIMESTAMP(%s)
+				AND UNIX_TIMESTAMP(orders.date_created_gmt) < CURRENT_TIMESTAMP
+				AND orders.type = 'shop_order'
+				AND tracking.orderId IS NULL
+			GROUP BY orders.ID
+		";
+		} else {
+			$postsTableName = esc_sql($wpdb->prefix . "posts");
+			$query = "
+			SELECT posts.ID
+			FROM %i AS posts
+			LEFT JOIN %i AS tracking ON tracking.orderId = posts.ID
+			WHERE posts.post_status IN (" . implode(',', array_fill(0, count($orderStatusSettings), '%s')) . ")
+            AND UNIX_TIMESTAMP(posts.post_date) >= UNIX_TIMESTAMP(%s)
+            AND UNIX_TIMESTAMP(posts.post_date) < CURRENT_TIMESTAMP
+            AND posts.post_type = 'shop_order'
+            AND tracking.orderId IS NULL
+			GROUP BY posts.ID
+			";
+		}
 
-		return $ordersToSubmit;
+		$params = array_merge(
+			$orderStatusSettings,
+			[$pluginInstallationDateTimestamp]
+		);
+		return $wpdb->get_results($wpdb->prepare($query, $postsTableName, $trackingTableName, ...$params));
 	}
 
 	public function getOrdersToSendToMRPacket()
@@ -127,10 +141,11 @@ class MRPacketCreate
 		}
 
 		if (is_array($ordersToSubmit) && count($ordersToSubmit) > 0) {
-			$orders = [];
-			foreach ($ordersToSubmit as $orderId) {
+			$result = array();
+			foreach ($ordersToSubmit as $order) {
+				$orderId = $order->ID;
 				try {
-					$orders[] = wc_get_order($orderId);
+					$result[] = wc_get_order($order);
 				} catch (\UnexpectedValueException $ex) {
 					if ($ex->getCode() == 0) {
 						$this->plugin->helper->db->delete(MRPACKET_TABLE_TRACKING, array('orderId' => $orderId));
@@ -139,18 +154,19 @@ class MRPacketCreate
 				}
 			}
 
-			return $orders;
+			return $result;
 		}
 
 		return false;
 	}
 
-	public function setDefaults()
+	public function setDefaults(): array
 	{
 		$orderData = [];
-		$orderData['receiver']['company'] 		= '';
+
 		$orderData['receiver']['firstname'] 	= '';
 		$orderData['receiver']['lastname'] 		= '';
+		$orderData['receiver']['company'] 		= '';
 		$orderData['receiver']['street'] 		= '';
 		$orderData['receiver']['street_number']	= '';
 		$orderData['receiver']['zip']			= '';
@@ -158,39 +174,45 @@ class MRPacketCreate
 		$orderData['receiver']['phone_nr'] 		= '';
 		$orderData['receiver']['email'] 		= '';
 		$orderData['receiver']['country'] 		= '';
+		$orderData['receiver']['email'] 		= '';
 
-		$orderData['shipper']['street'] 		= get_option('woocommerce_store_address');
-		$orderData['shipper']['street_number']	= get_option('woocommerce_store_address_2');
+		// Shipper
+		$orderData['shipper']['street']			= get_option('woocommerce_store_address');
+		$orderData['shipper']['street_number']  = get_option('woocommerce_store_address_2');
 		$orderData['shipper']['zip']			= get_option('woocommerce_store_postcode');
-		$orderData['shipper']['city'] 			= get_option('woocommerce_store_city');
+		$orderData['shipper']['city']			= get_option('woocommerce_store_city');
+		$orderData['shipper']['country']		= '';
 
-		$countryAndState = get_option('woocommerce_default_country');
-		$countryAndState = explode(":", $countryAndState);
-		$orderData['shipper']['country'] 		= $countryAndState[0];
+		$storeCountryAndState = get_option('woocommerce_default_country');
+		if ($storeCountryAndState) {
+			$splittedCountry = explode(":", $storeCountryAndState);
+			$storeCountry = $splittedCountry[0];
+			$orderData['shipper']['country']	= $storeCountry;
+		}
 
 		$orderData['packet']['length']			= null;
 		$orderData['packet']['width']			= null;
 		$orderData['packet']['height']			= null;
-		$orderData['packet']['weight']			= null;
-		$orderData['packet']['meta']			= [];
-
-		$orderData['products'] = [];
+		$orderData['packet']['weight']			= 0;
 
 		return $orderData;
 	}
 
-	public function prepareOrderForMRPacketApi($order)
+	public function prepareOrderForMRPacketApi($order): array
 	{
 		$orderData = $this->setDefaults();
+
 		$unitsConvertor = new Convertor();
-		$orderData['receiver']['firstname']		= $order->get_shipping_first_name();
+		$orderData['receiver']['firstname']	= $order->get_shipping_first_name();
 		$orderData['receiver']['lastname']		= $order->get_shipping_last_name();
 		$orderData['receiver']['company']		= $order->get_shipping_company();
-		$orderData['receiver']['phone']			= $order->get_billing_phone();
+
+		$orderData['receiver']['phone_nr']			= $order->get_billing_phone();
 		$orderData['receiver']['email']			= $order->get_billing_email();
 
 		$address = 	trim($order->get_shipping_address_1() . ' ' . $order->get_shipping_address_2());
 		$match = preg_match('/^([^\d]*[^\d\s]) *(\d.*)$/', $address, $result);
+
 		if ($match !== 0) {
 			$street = $result[1];
 			$streetNumber = $result[2];
@@ -201,56 +223,61 @@ class MRPacketCreate
 
 		$orderData['receiver']['street']		= $street;
 		$orderData['receiver']['street_number']	= $streetNumber;
-		$orderData['receiver']['zip']			= $order->get_shipping_postcode();
+		$orderData['receiver']['zip']	= $order->get_shipping_postcode();
 		$orderData['receiver']['city']			= $order->get_shipping_city();
 		$orderData['receiver']['country']		= $order->get_shipping_country();
 
-		$orderData['packet']['meta']		= ['id' => $order->get_id(), 'reference' => $order->get_order_key()];
+		$orderData['order']['id']				= $order->get_id();
+		$orderData['order']['reference']		= $order->get_order_key();
+
+		$orderPositions = $order->get_items() ? $order->get_items() : 0;
 
 		$productCount = 0;
-		$orderPositions = $order->get_items() ? $order->get_items() : 0;
-		foreach ($orderPositions as $position) {
-			if ($this->plugin->helper->ignoreOrderItem($position)) {
+		foreach ($orderPositions as $item_values) {
+			if ($this->plugin->helper->ignoreOrderItem($item_values)) {
 				continue;
 			}
 
-			for ($i = 0; $i < $position->get_quantity(); $i++) {
+			for ($i = 0; $i < $item_values->get_quantity(); $i++) {
+
+				$orderData['products'][$productCount]['name']	= $item_values->get_name() ?  $item_values->get_name() : '';
+
 				$from_unit_dimension = strtolower(get_option('woocommerce_dimension_unit', 'cm'));
-				if (($position->get_product()->get_length() != null) && ($position->get_product()->get_length() > 0)) {
-					$unitsConvertor->from($position->get_product()->get_length(), $from_unit_dimension);
+				if (($item_values->get_product()->get_length() != null) && ($item_values->get_product()->get_length() > 0)) {
+					$unitsConvertor->from($item_values->get_product()->get_length(), $from_unit_dimension);
 					$lengthInCm = $unitsConvertor->to('cm');
 					$orderData['products'][$productCount]['length']	= $lengthInCm  ?  $lengthInCm : null;
 				}
 
-				if (($position->get_product()->get_width() != null) && ($position->get_product()->get_width() > 0)) {
-					$unitsConvertor->from($position->get_product()->get_width(), $from_unit_dimension);
+				if (($item_values->get_product()->get_width() != null) && ($item_values->get_product()->get_width() > 0)) {
+					$unitsConvertor->from($item_values->get_product()->get_width(), $from_unit_dimension);
 					$widthInCm = $unitsConvertor->to('cm');
 					$orderData['products'][$productCount]['width']	= $widthInCm   ?  $widthInCm  : null;
 				}
 
-				if (($position->get_product()->get_height() != null) && ($position->get_product()->get_height() > 0)) {
-					$unitsConvertor->from($position->get_product()->get_height(), $from_unit_dimension);
+				if (($item_values->get_product()->get_height() != null) && ($item_values->get_product()->get_height() > 0)) {
+					$unitsConvertor->from($item_values->get_product()->get_height(), $from_unit_dimension);
 					$heighthInCm = $unitsConvertor->to('cm');
 					$orderData['products'][$productCount]['height']	= $heighthInCm  ?  $heighthInCm : null;
 				}
 
-				$weightInGram = false;
-				if (($position->get_product()->get_weight() != null) && ($position->get_product()->get_weight() > 0)) {
+				$weightInKg = false;
+				if (($item_values->get_product()->get_weight() != null) && ($item_values->get_product()->get_weight() > 0)) {
 					$from_unit_weight = strtolower(get_option('woocommerce_weight_unit', 'kg'));
 					if ($from_unit_weight == 'lbs') {
 						$from_unit_weight = 'lb';
 					}
-					$unitsConvertor->from($position->get_product()->get_weight(), $from_unit_weight);
-					$weightInGram = $unitsConvertor->to('g');
+					$unitsConvertor->from($item_values->get_product()->get_weight(), $from_unit_weight);
+					$weightInKg = $unitsConvertor->to('kg');
 				}
-				$orderData['products'][$productCount]['weight']	= $weightInGram ? $weightInGram : 0;
+				$orderData['products'][$productCount]['weight']	= $weightInKg ? $weightInKg : 0;
 
 				$productCount++;
 			}
 		}
 
 		if (!is_array($orderData['products'])) {
-			return;
+			return $orderData;
 		}
 
 		$orderData['packet']['length']	= 0;
@@ -263,85 +290,66 @@ class MRPacketCreate
 			$orderData['packet']['height'] = $orderData['products'][0]['height'];
 		}
 
-		foreach ($orderData['products'] as $product) {
-			$orderData['packet']['weight'] += $product['weight'];
+		foreach ($orderData['products'] as $singleProduct) {
+			$orderData['packet']['weight'] += $singleProduct['weight'];
 		}
 
 		return $orderData;
 	}
 
-	public function sendOrderToMRPacket($orderData)
+	public function sendOrderToMRPacketBusinessBackend($orderData)
 	{
 		try {
-			$contract = new Contract(
+			$mContract = new Contract(
 				$this->plugin->helper->getPluginInfo()['shopFrameWorkName'],
 				$this->plugin->helper->getPluginInfo()['shopFrameWorkVersion'],
 				$this->plugin->helper->getPluginInfo()['shopModuleVersion'],
 				$this->plugin->helper->getMRPacketApiToken()
 			);
 
-			$requestObj = new ContractPacket();
-			$requestObj->receiver['firstname'] 		= $orderData['receiver']['firstname'];
-			$requestObj->receiver['lastname']		= $orderData['receiver']['lastname'];
-			$requestObj->receiver['company']		= $orderData['receiver']['company'];
-			$requestObj->receiver['street']			= $orderData['receiver']['street'];
-			$requestObj->receiver['street_number']	= $orderData['receiver']['street_number'];
-			$requestObj->receiver['zip']			= $orderData['receiver']['zip'];
-			$requestObj->receiver['city']			= $orderData['receiver']['city'];
-			$requestObj->receiver['phone_nr']		= $orderData['receiver']['phone_nr'];
-			$requestObj->receiver['email']			= $orderData['receiver']['email'];
-			$requestObj->receiver['country']		= $orderData['receiver']['country'];
-
-			$requestObj->shipper['street']			= $orderData['shipper']['street'];
-			$requestObj->shipper['street_number']	= $orderData['shipper']['street_number'];
-			$requestObj->shipper['zip']				= $orderData['shipper']['zip'];
-			$requestObj->shipper['city']			= $orderData['shipper']['city'];
-
-			$requestObj->packet['length'] 	= $orderData['packet']['length'];
-			$requestObj->packet['width'] 	= $orderData['packet']['width'];
-			$requestObj->packet['height'] 	= $orderData['packet']['height'];
-			$requestObj->packet['weight'] 	= $orderData['packet']['weight'];
-			$requestObj->packet['meta'] 	= $orderData['packet']['meta'];
-
-			$this->status = $contract->create($requestObj);
+			$this->status = $mContract->create($this->getPacketData($orderData));
 			if ($this->status['success']) {
-				$meta = $this->status['data']['meta'];
-
-				if (!array_key_exists('id', $meta)) {
-					throw new \Exception('Fehler beim Export ');
-				}
-
-				$mrpacketOrderId = $meta['id'];
+				$newPacket = $this->status['data'];
+				$packetOrderId = (int) $this->plugin->helper->getOrderValue($newPacket, 'id');
 				if (is_array($this->ordersToReSubmit) && count($this->ordersToReSubmit) > 0) {
 					foreach ($this->ordersToReSubmit as $id => $orderId) {
-						if ($mrpacketOrderId != $orderId) {
-							continue;
+						if ($packetOrderId == $orderId) {
+							$this->plugin->helper->db->update(
+								MRPACKET_TABLE_TRACKING,
+								array(
+									'archive' => 1,
+								),
+								array('id' => $id),
+								array(
+									'%d',
+									'%d',
+								),
+								array(
+									'%d',
+									'%d'
+								)
+							);
 						}
-
-						$this->plugin->helper->archivePacket($id);
 					}
 				}
 
-				$dateCreated = new DateTime();
-				$dateChanged = new DateTime();
-				$timeZone = $this->plugin->helper->getDefaultTimezoneString();
 				$this->plugin->helper->db->insert(MRPACKET_TABLE_TRACKING, array(
-					'pk' 				=> $this->status['data']['id'],
-					'orderId' 			=> $mrpacketOrderId,
-					'orderReference'	=> $meta['reference'],
-					'orderStatus'		=> __('Exported', 'mrpacket'),
-					'dCreated'			=> $dateCreated->setTimezone(new DateTimeZone($timeZone))->format('Y-m-d H:i:s'),
-					'dChanged'			=> $dateChanged->setTimezone(new DateTimeZone($timeZone))->format('Y-m-d H:i:s'),
+					'pk' 				=> $newPacket['id'],
+					'orderId' 			=> $packetOrderId,
+					'orderReference'	=> $this->plugin->helper->getOrderValue($newPacket, 'reference'),
+					'orderStatus'		=> OrderStatus::getKeys()[OrderStatus::SYNCED],
+					'dCreated'			=> gmdate('Y-m-d H:i:s'),
+					'dChanged'			=> gmdate('Y-m-d H:i:s'),
 					'archive'           => 0,
 				));
 
-				$orderIdMsg = (int) $mrpacketOrderId;
-				$this->plugin->helper->messages['success'][] = __('Successfully created parcel. Order ID: ', 'mrpacket') . $orderIdMsg;
+				$this->plugin->helper->messages['success'][] = __('Successfully created parcel. Order ID: ', 'mrpacket') . $packetOrderId;
 
 				$logRequest = "(pretty printing parcel data)";
 				$logRequest .= "<pre>";
 				$logRequest .= wp_json_encode($this->status['data']);
 				$logRequest .= "</pre>";
+
 				$this->plugin->helper->writeLog($logRequest, 'success');
 				return;
 			}
@@ -357,28 +365,63 @@ class MRPacketCreate
 			$this->plugin->helper->writeLog($this->plugin->helper->messages['error'], 'error');
 		} catch (CrException $e) {
 			if ($e->getCode() == 401) {
-				$this->plugin->helper->resetCrSettingsApiToken();
+				$this->plugin->helper->resetSettingsApiToken();
 				$this->plugin->helper->messages['error'][] = __('Your Token seems to be invalid. Please go to the WooCommerce > Settings > MRPacket plugin settings dialogue and request a new one by entering your password and username again.', 'mrpacket');
 				$this->plugin->helper->writeLog($this->plugin->helper->messages['error'], 'error');
 			} else {
-
 				$errorMsgException = 'Exception: error in communication with mrpacket server: ' . $e->getMessage();
 				$errorMsgTrace  = 'Code: '  . $e->getCode() . "<br/>\n";
 				$errorMsgTrace .= 'Trace: ' . $e->getTraceAsString();
 
 				$this->plugin->helper->messages['error'][] = $errorMsgException;
+				$this->plugin->helper->writeLog($errorMsgException, 'error');
+				$this->plugin->helper->writeLog($errorMsgTrace, 'error');
 			}
-
-			$this->plugin->helper->writeLog($errorMsgException, 'error');
-			$this->plugin->helper->writeLog($errorMsgTrace, 'error');
 		} catch (Exception $e) {
 			$errorMsgException = "Something else went terribly wrong: " . $e->getMessage();
 			$errorMsgTrace = 'Trace: ' . $e->getTraceAsString();
 
 			$this->plugin->helper->messages['error'][] = $errorMsgException;
-
 			$this->plugin->helper->writeLog($errorMsgException, 'error');
 			$this->plugin->helper->writeLog($errorMsgTrace, 'error');
 		}
+	}
+
+	protected function getPacketData(array $orderData): ContractPacket
+	{
+		$data = new ContractPacket();
+
+		// Receiver
+		$data->receiver['firstname'] 	= $orderData['receiver']['firstname'];
+		$data->receiver['lastname']		= $orderData['receiver']['lastname'];
+		$data->receiver['company']		= $orderData['receiver']['company'];
+		$data->receiver['phone_nr']			= $orderData['receiver']['phone_nr'];
+		$data->receiver['email']			= $orderData['receiver']['email'];
+		$data->receiver['street']			= $orderData['receiver']['street'];
+		$data->receiver['street_number']	= $orderData['receiver']['street_number'];
+		$data->receiver['zip']		= $orderData['receiver']['zip'];
+		$data->receiver['city']			= $orderData['receiver']['city'];
+		$data->receiver['country']		= $orderData['receiver']['country'];
+
+		// Shipper
+		$data->shipper['street'] = $orderData['shipper']['street'];
+		$data->shipper['street_number'] = $orderData['shipper']['street_number'];
+		$data->shipper['zip'] = $orderData['shipper']['zip'];
+		$data->shipper['city'] = $orderData['shipper']['city'];
+		$data->shipper['country'] = $orderData['shipper']['country'];
+
+		// Packet
+		$data->packet['length'] 	= $orderData['packet']['length'];
+		$data->packet['width'] 	= $orderData['packet']['width'];
+		$data->packet['height'] 	= $orderData['packet']['height'];
+		$data->packet['weight'] 	= $orderData['packet']['weight'];
+		$data->packet['meta'] 	= [
+			'order' => [
+				'id' => $orderData['order']['id'],
+				'reference' => $orderData['order']['reference'],
+			]
+		];
+
+		return $data;
 	}
 }

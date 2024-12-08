@@ -4,7 +4,7 @@
  * MRPacket
  * The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
  * 
- * @version 0.0.1
+ * @version 1.0.0
  * @link https://www.mrpacket.de/api
  * @license GPLv2
  * @author MRPacket <info@mrpacket.de>
@@ -26,7 +26,6 @@ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 class Activator
 {
-
 	public $db;
 	public $version;
 	public $currentPluginVersionInstalled;
@@ -61,7 +60,7 @@ class Activator
 
 		$charset_collate = $this->db->get_charset_collate();
 
-		$sql = "CREATE TABLE IF NOT EXISTS " . MRPACKET_TABLE_TRACKING . " (
+		$sql = "CREATE TABLE " . MRPACKET_TABLE_TRACKING . " (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			pk mediumint(9) NOT NULL,
 			orderId mediumint(9) NOT NULL,
@@ -76,7 +75,7 @@ class Activator
 
 		dbDelta($sql);
 
-		$sql = "CREATE TABLE IF NOT EXISTS " . MRPACKET_TABLE_SETTINGS . " (
+		$sql = "CREATE TABLE " . MRPACKET_TABLE_SETTINGS . " (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			cName tinytext NOT NULL,
 			cValue tinytext NOT NULL,
@@ -112,7 +111,7 @@ class Activator
 
 		$this->db->query($sql);
 
-		$sql = "CREATE TABLE IF NOT EXISTS " . MRPACKET_TABLE_LOGGING . " (
+		$sql = "CREATE TABLE " . MRPACKET_TABLE_LOGGING . " (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			type tinytext NOT NULL,
 			message text NOT NULL,

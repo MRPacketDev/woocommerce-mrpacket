@@ -4,7 +4,7 @@
  * MRPacket
  * The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
  * 
- * @version 0.0.1
+ * @version 1.0.0
  * @link https://www.mrpacket.de/api
  * @license GPLv2
  * @author MRPacket <info@mrpacket.de>
@@ -26,7 +26,7 @@
                     <h1><?php esc_html_e('Orders transferred to MRPacket', 'mrpacket'); ?></h1>
                     <p>
                         <?php echo wp_kses(
-                            __('<p>Below you can see all orders that have already been transferred from your shop to MRPacket. </p><strong>Please note:</strong><p>Orders must have the status "paid / processed" in your WooCommerce Shop to be transferred. <br />The transfer takes place automatically when the status changes. In addition, for the transfer, only orders that have already been received in your shop prior to the activation of the plugin will be considered!</p>', 'mrpacket'),
+                            __('<p>Below you can see all orders that have already been transferred from your shop to MRPacket. </p><strong>Please note:</strong><p>Orders must have the status which were selected in the plugin settings in order to be transferred. <br />The transfer takes place automatically when the status changes. In addition, for the transfer, only orders that have already been received in your shop prior to the activation of the plugin will be considered!</p>', 'mrpacket'),
                             [
                                 'p' => [],
                                 'strong' => []
@@ -58,7 +58,7 @@
         <table id="dataTable" class="table table-striped table-bordered" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th style="text-align: center;"><input type="checkbox" class="selectAll" name="selectAll" value="all"></th>
+                    <th class="text-center"><input type="checkbox" class="selectAll" name="selectAll" value="all"></th>
                     <th><?php esc_html_e('ID', 'mrpacket'); ?></th>
                     <th><?php esc_html_e('PK', 'mrpacket'); ?></th>
                     <th><?php esc_html_e('Order-ID', 'mrpacket'); ?></th>

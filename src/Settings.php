@@ -4,7 +4,7 @@
  * MRPacket
  * The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
  * 
- * @version 0.0.1
+ * @version 1.0.0
  * @link https://www.mrpacket.de/api
  * @license GPLv2
  * @author MRPacket <info@mrpacket.de>
@@ -60,15 +60,20 @@ class Settings
 
     public function settingsTab()
     {
+        if (isset($_REQUEST['mrpacket_settings_form_nonce']) && !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['mrpacket_settings_form_nonce'])), 'mrpacket_update')) {
+            $this->helper->messages['error'][] = __('Sorry, your nonce was not correct. Please try again.', 'mrpacket');
+        }
+
         $resetSettings = isset($_POST['mrpacket_reset_settings']) ? (int) $_POST['mrpacket_reset_settings'] : 0;
         if ($resetSettings === 1) {
-            $this->helper->resetCrSettings();
+            $this->helper->resetSettings();
         }
 
         $token = $this->helper->getMRPacketApiToken();
         $orderStatusFromSystem = $this->orderStatusFromSystem = wc_get_order_statuses();
         $orderStatusSelected = get_option('orderstatus', array('wc-processing'));
-        $mrpacket_cron_last_run = $this->helper->getLastCronRunDate();
+        $mrpacketCronLastRun = $this->helper->getLastCronRunDate();
+
 
         do_action('show_mrpacket_notices', $this->helper->messages);
         $adminURL = $this->helper->pluginAdminUrl;
@@ -78,16 +83,20 @@ class Settings
 
     public function updateSettings()
     {
-        if (isset($_REQUEST['mrpacket_settings_form_nonce']) && !wp_verify_nonce($_REQUEST['mrpacket_settings_form_nonce'], 'mrpacket_update')) {
+        if (isset($_REQUEST['mrpacket_settings_form_nonce']) && !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['mrpacket_settings_form_nonce'])), 'mrpacket_update')) {
             $this->helper->messages['error'][] = __('Sorry, your nonce was not correct. Please try again.', 'mrpacket');
         } else {
             $userName = '';
             $password = '';
-            if (isset($_POST['mrpacket_api_username'])) {
-                $userName = (string) trim(sanitize_user($_POST['mrpacket_api_username']));
-            }
-            if (isset($_POST['mrpacket_api_password'])) {
-                $password = (string) trim($_POST['mrpacket_api_password']);
+
+            if (isset($_POST['mrpacket_api_username']) && isset($_POST['mrpacket_api_password'])) {
+                if ((wp_unslash($_POST['mrpacket_api_username']) !== null)) {
+                    $userName = (string) trim(sanitize_user(wp_unslash($_POST['mrpacket_api_username'])));
+                }
+
+                if (isset($_POST['mrpacket_api_password'])) {
+                    $password = (string) trim(sanitize_text_field(wp_unslash($_POST['mrpacket_api_password'])));
+                }
             }
 
             if (!empty($userName) && !empty($password)) {
@@ -115,16 +124,16 @@ class Settings
                 }
             }
 
-            if ((isset($_POST['mrpacket_transfer_settings']) && !empty($_POST['mrpacket_transfer_settings'])) && $_POST['mrpacket_transfer_settings'] != '999') {
-                $mrpacket_transfer_settings = $_POST['mrpacket_transfer_settings'];
-                update_option('orderstatus', $mrpacket_transfer_settings);
+            if ((isset($_POST['mrpacket_transfer_settings']) && !empty(array_map('sanitize_text_field', wp_unslash($_POST['mrpacket_transfer_settings'])))) && array_map('sanitize_text_field', wp_unslash($_POST['mrpacket_transfer_settings'])) != '999') {
+                $orderStatusSettings = array_map('sanitize_text_field', wp_unslash($_POST['mrpacket_transfer_settings']));
+                update_option('orderstatus', $orderStatusSettings);
 
                 $this->helper->messages['success'][] = __('Status settings updated successfully.', 'mrpacket');
             } else {
                 update_option('orderstatus', array('999'));
             }
 
-            $mrpacket_admin_email = isset($_POST['mrpacket_admin_email']) ? sanitize_email($_POST['mrpacket_admin_email']) : '';
+            $mrpacket_admin_email = isset($_POST['mrpacket_admin_email']) ? sanitize_email(wp_unslash($_POST['mrpacket_admin_email'])) : '';
             if (!empty($mrpacket_admin_email)) {
                 if (!filter_var($mrpacket_admin_email, FILTER_VALIDATE_EMAIL)) {
                     $this->helper->messages['error'][] = __('Please enter a valid email address!', 'mrpacket');
@@ -138,7 +147,7 @@ class Settings
             }
 
             if (empty($mrpacket_admin_email)) {
-                $this->helper->resetCrSettingsAdminMail();
+                $this->helper->resetSettingsAdminMail();
             }
         }
     }

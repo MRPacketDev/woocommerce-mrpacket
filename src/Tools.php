@@ -26,7 +26,9 @@ require_once(__DIR__ . DIRECTORY_SEPARATOR . 'constants.php');
 
 class Tools
 {
+
 	protected $plugin;
+
 	public function __construct($plugin)
 	{
 		$this->plugin = $plugin;
