@@ -4,7 +4,7 @@
  * MRPacket
  * The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
  * 
- * @version 0.0.1
+ * @version 1.0.0
  * @link https://www.mrpacket.de/api
  * @license GPLv2
  * @author MRPacket <info@mrpacket.de>
@@ -41,14 +41,6 @@ class Frontend
 		$this->helper = new MRPacketHelper($plugin);
 	}
 
-	public function enqueue_styles()
-	{
-	}
-
-	public function enqueue_scripts()
-	{
-	}
-
 	public function mrpacketCron($plugin = false)
 	{
 		if ($plugin) {
@@ -59,7 +51,7 @@ class Frontend
 		$mrpacketCreate->sendOrdersToMRPacket();
 
 		if (is_array($mrpacketCreate->plugin->helper->messages)) {
-			$this->helper->writeLog($this->helper->messages, 'error');
+			$this->helper->writeLog($this->helper->messages, 'info');
 
 			$isRefresh = isset($_POST['refresh']) ? (int) $_POST['refresh'] : 0;
 			if ($isRefresh === 1) {

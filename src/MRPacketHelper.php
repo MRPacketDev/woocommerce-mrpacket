@@ -4,7 +4,7 @@
  * MRPacket
  * The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
  * 
- * @version 0.0.1
+ * @version 1.0.0
  * @link https://www.mrpacket.de/api
  * @license GPLv2
  * @author MRPacket <info@mrpacket.de>
@@ -35,10 +35,16 @@ class MRPacketHelper
     public $shopFrameWorkVersion;
     public $shopModuleVersion;
     public $pluginSettings;
+
     public $db;
     public $pluginInfo;
     public $pluginAdminUrl;
     public $messages;
+
+    const MESSAGES_TYPE_ERROR = 'error';
+    const MESSAGES_TYPE_SUCCESS = 'success';
+    const MESSAGES_TYPE_WARNING = 'warning';
+    const MESSAGES_TYPE_INFO = 'info';
 
     public function __construct($plugin)
     {
@@ -51,8 +57,8 @@ class MRPacketHelper
         $this->pluginInfo       = $this->getPluginInfo();
 
         $this->messages = array(
-            'error'     => array(),
-            'success'     => array(),
+            self::MESSAGES_TYPE_ERROR     => array(),
+            self::MESSAGES_TYPE_SUCCESS     => array(),
         );
     }
 
@@ -70,11 +76,11 @@ class MRPacketHelper
     public function getMRPacketApiToken()
     {
         $this->pluginSettings = $this->getPluginSettings();
-
         if (!isset($this->pluginSettings['mrpacket_api_token']) || empty($this->pluginSettings['mrpacket_api_token'])) {
             $this->messages['error'][] = __('Error: Auth Token is missing! Please go to WooCommerce > Settings > MRPacket plugin settings, and enter your MRPacket username and passwort to get one!', 'mrpacket');
-            $this->writeLog(__('Error: Auth Token is missing! Please go to WooCommerce > Settings > MRPacket plugin settings, and enter your MRPacket username and passwort to get one!', 'mrpacket'), 'error');
+            $this->writeLog(__('Error: Auth Token is missing! Please go to WooCommerce > Settings > MRPacket plugin settings, and enter your MRPacket username and passwort to get one!', 'mrpacket'), self::MESSAGES_TYPE_ERROR);
         } else if (isset($this->pluginSettings['mrpacket_api_token']) && !empty($this->pluginSettings['mrpacket_api_token'])) {
+
             return $this->pluginSettings['mrpacket_api_token'];
         }
 
@@ -86,6 +92,7 @@ class MRPacketHelper
         $this->shopFrameWorkName    = $this->plugin->get_shopframework();
         $this->shopFrameWorkVersion = get_option('woocommerce_version');
         $this->shopModuleVersion    = $this->plugin->get_version();
+
         $this->pluginAdminUrl       = admin_url('admin.php?page=mrpacket');
 
         $this->pluginInfo = array(
@@ -100,38 +107,35 @@ class MRPacketHelper
 
     public function convertToUtf8($var, $deep = TRUE)
     {
-        if ($var === null) {
-            return null;
-        }
-
         if (is_array($var)) {
             foreach ($var as $key => $value) {
                 if ($deep) {
                     $var[$key] = $this->convertToUtf8($value, $deep);
                 } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
-                    $var[$key] = utf8_encode($var);
+                    $var[$key] = mb_convert_encoding($var, 'UTF-8');
                 }
             }
             return $var;
         } elseif (is_object($var)) {
-
             foreach ($var as $key => $value) {
                 if ($deep) {
                     $var->$key = $this->convertToUtf8($value, $deep);
                 } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
-                    $var->$key = utf8_encode($var);
+                    $var->$key = mb_convert_encoding(wp_json_encode($var), 'UTF-8');
                 }
             }
             return $var;
+        } else if ($var) {
+            return (!mb_detect_encoding($var, 'utf-8', true)) ? mb_convert_encoding($var, 'UTF-8') : $var;
         } else {
-            return (!mb_detect_encoding($var, 'utf-8', true)) ? utf8_encode($var) : $var;
+            return $var;
         }
     }
 
     public function sendErrorMail()
     {
         if (!isset($this->pluginSettings['mrpacket_admin_email']) || empty($this->pluginSettings['mrpacket_admin_email'])) {
-            $this->writeLog(__('Error sending mrpacket failure-mail: No valid email address set in mrpacket-plugin settings.', 'mrpacket'), 'error');
+            $this->writeLog(__('Error sending mrpacket failure-mail: No valid email address set in mrpacket-plugin settings.', 'mrpacket'), self::MESSAGES_TYPE_ERROR);
             return;
         }
 
@@ -140,7 +144,9 @@ class MRPacketHelper
         );
 
         $subject = __('WooCommerce: MRPacket-Plugin API-Error', 'mrpacket');
+
         $pluginTriggerUrl = esc_url($this->pluginInfo['pluginAdminUrl']) . '&refresh=1';
+
         $message = '
             <html>
                 <head>
@@ -148,7 +154,7 @@ class MRPacketHelper
                 </head>
                 <body>' . __('Dear Shop Owner,', 'mrpacket') . ' <br><br>
                     
-                    <p>' . esc_html__('a transfer of orders to the mrpacket backend by the plugin failed.', 'mrpacket') . '</p>
+                    <p>' . esc_html_e('a transfer of orders to the mrpacket backend by the "WooCommerce"-plugin failed.', 'mrpacket') . '</p>
         
                     <p><strong>' . __('To start the transfer again, please click here:', 'mrpacket') . '</strong></p>
 
@@ -163,6 +169,7 @@ class MRPacketHelper
         ';
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
+
         $res = wp_mail($recipients, $subject, $message, $headers);
     }
 
@@ -172,6 +179,7 @@ class MRPacketHelper
         $product = wc_get_product($productId);
 
         if (is_bool($product)) {
+            $this->writeLog(__('Error at processing order item ', 'mrpacket') . $productId, self::MESSAGES_TYPE_ERROR, true);
             return true;
         }
 
@@ -182,39 +190,40 @@ class MRPacketHelper
         return false;
     }
 
-    public function showNotices($messages = '')
+    public function showNotices($messages = [])
     {
-        if (!$messages) {
+        if (empty($messages)) {
             $messages = $this->messages;
         }
 
         if (is_array($messages) && count($messages) > 0) {
-            foreach ($messages as $type => $message) {
-                foreach ($message as $value) {
+            foreach ($messages as $type => $messages) {
+                foreach ($messages as $value) {
                     switch ($type) {
-                        case 'error':
+                        case self::MESSAGES_TYPE_ERROR:
                             $class = 'notice notice-error is-dismissible';
                             break;
-                        case 'success':
+                        case self::MESSAGES_TYPE_SUCCESS:
                             $class = 'notice notice-success is-dismissible';
                             break;
-                        case 'warning':
+                        case self::MESSAGES_TYPE_WARNING:
                             $class = 'notice notice-warning is-dismissible';
                             break;
-                        case 'info':
+                        case self::MESSAGES_TYPE_INFO:
                             $class = 'notice notice-info is-dismissible';
                             break;
                         default:
                             $class = 'notice notice-info is-dismissible';
                             break;
                     }
+
                     printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($value));
                 }
             }
         }
     }
 
-    function writeLog($log, $type = null)
+    function writeLog($log, string $type = null, bool $addToMessages = false): void
     {
         if (!$log) {
             return;
@@ -226,6 +235,7 @@ class MRPacketHelper
 
         $date = new DateTime();
         $dateNow = $date->setTimezone(new DateTimeZone($this->getDefaultTimezoneString()))->format('Y-m-d H:i:s');
+
         if (is_array($log) || is_object($log)) {
             $message = wp_json_encode($log);
         } else {
@@ -249,13 +259,15 @@ class MRPacketHelper
                 '%s'
             )
         );
+
+        if ($addToMessages) {
+            $this->plugin->helper->messages['error'][] = $message;
+        }
     }
 
     public function getDefaultTimezoneString()
     {
-
         $defaultTimezone = get_option('timezone_string', 'Europe/Berlin');
-
         if (!isset($defaultTimezone) || empty($defaultTimezone)) {
             $defaultTimezone = 'Europe/Berlin';
         }
@@ -263,18 +275,18 @@ class MRPacketHelper
         return $defaultTimezone;
     }
 
-    public function resetCrSettings()
+    public function resetSettings()
     {
-        $this->resetCrSettingsAdminMail();
-        $this->resetCrSettingsApiToken();
+        $this->resetSettingsAdminMail();
+        $this->resetSettingsApiToken();
     }
 
-    public function resetCrSettingsAdminMail()
+    public function resetSettingsAdminMail()
     {
         update_option('mrpacket_admin_email', '');
     }
 
-    public function resetCrSettingsApiToken()
+    public function resetSettingsApiToken()
     {
         delete_option('mrpacket_api_token');
     }
@@ -286,33 +298,37 @@ class MRPacketHelper
 
     public function getLastCronRunDate()
     {
-        $mrpacket_cron_last_run = $this->db->get_row("SELECT `cValue` FROM " . MRPACKET_TABLE_SETTINGS . " WHERE `cName` = 'mrpacket_cron_last_run'", ARRAY_A);
-        if ($mrpacket_cron_last_run) {
-            return $mrpacket_cron_last_run['cValue'];
+        $date = $this->db->get_row("SELECT `cValue` FROM " . MRPACKET_TABLE_SETTINGS . " WHERE `cName` = 'mrpacket_cron_last_run'", ARRAY_A);
+        if ($date) {
+            return $date['cValue'];
         }
 
         return null;
     }
 
-    public function archivePacket($id)
+    /**
+     * @todo refactor to helper class ?
+     *
+     * @param array $packet
+     * @param string $key
+     * @return mixed
+     */
+    public function getOrderValue(array $packet, string $key)
     {
-        $this->db->update(
-            MRPACKET_TABLE_TRACKING,
-            array(
-                'orderStatus'     => __('Archived', 'mrpacket'),
-                'archive'         => 1,
-            ),
-            array('id' => $id),
-            array(
-                '%s',
-                '%d',
-                '%d',
-            ),
-            array(
-                '%s',
-                '%d',
-                '%d'
-            )
-        );
+        if (!isset($packet['meta'])) {
+            return null;
+        }
+
+        $meta = $packet['meta'];
+        if (!isset($meta['order'])) {
+            return null;
+        }
+
+        $orderData = $meta['order'];
+        if (!isset($orderData[$key])) {
+            return null;
+        }
+
+        return $orderData[$key];
     }
 }

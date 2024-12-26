@@ -4,7 +4,7 @@
  * MRPacket
  * The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
  * 
- * @version 0.0.1
+ * @version 1.0.0
  * @link https://www.mrpacket.de/api
  * @license GPLv2
  * @author MRPacket <info@mrpacket.de>
@@ -41,7 +41,6 @@ final class Plugin
 
 	public function __construct($plugin_data)
 	{
-
 		global $wpdb;
 
 		$this->loader = new Loader();
@@ -66,26 +65,23 @@ final class Plugin
 
 	private function define_admin_hooks()
 	{
-		$plugin_admin = new Admin($this);
-
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
-		$this->loader->add_action('admin_menu', $plugin_admin, 'mrpacket_plugin_menu');
+		$pluginAdmin = new Admin($this);
+		$this->loader->add_action('admin_enqueue_scripts', $pluginAdmin, 'enqueue_styles');
+		$this->loader->add_action('admin_enqueue_scripts', $pluginAdmin, 'enqueue_scripts');
+		$this->loader->add_action('admin_menu', $pluginAdmin, 'mrpacket_plugin_menu');
 		$this->loader->add_action('show_mrpacket_notices', $this->helper, 'showNotices', 10, 1);
-		$this->loader->add_filter('plugin_action_links_mrpacket/mrpacket.php', $plugin_admin, 'add_action_links', 10, 5);
+		$this->loader->add_filter('plugin_action_links_woocommerce_mrpacket/mrpacket.php', $pluginAdmin, 'add_action_links', 10, 5);
 	}
 
 	private function define_frontend_hooks()
 	{
-		$plugin_frontend = new Frontend($this);
-		$this->loader->add_action('wp_enqueue_scripts', $plugin_frontend, 'enqueue_styles');
-		$this->loader->add_action('wp_enqueue_scripts', $plugin_frontend, 'enqueue_scripts');
-		$this->loader->add_action('mrpacket_cron_event', $plugin_frontend, 'mrpacketCron', 10, 1);
+		$pluginFrontend = new Frontend($this);
+		$this->loader->add_action('mrpacket_cron_event', $pluginFrontend, 'mrpacketCron', 10, 1);
 	}
+
 
 	public function run()
 	{
-
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_frontend_hooks();
@@ -93,7 +89,6 @@ final class Plugin
 		$this->loader->run();
 
 		$role = get_role('administrator');
-
 		$role->add_cap('edit_mrpacket', true);
 
 		new Ajax($this);

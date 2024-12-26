@@ -4,7 +4,7 @@
  * MRPacket
  * The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
  * 
- * @version 0.0.1
+ * @version 1.0.0
  * @link https://www.mrpacket.de/api
  * @license GPLv2
  * @author MRPacket <info@mrpacket.de>
@@ -52,9 +52,6 @@ class Ajax
             if (!defined('WC_DOING_AJAX')) {
                 define('WC_DOING_AJAX', true);
             }
-            if (!WP_DEBUG || (WP_DEBUG && !WP_DEBUG_DISPLAY)) {
-                @ini_set('display_errors', 0);
-            }
             $GLOBALS['wpdb']->hide_errors();
         }
     }
@@ -73,7 +70,7 @@ class Ajax
     {
         global $wp_query;
         if (!empty($_GET['wc-ajax'])) {
-            $wp_query->set('wc-ajax', sanitize_text_field($_GET['wc-ajax']));
+            $wp_query->set('wc-ajax', sanitize_text_field(wp_unslash($_GET['wc-ajax'])));
         }
         if ($action = $wp_query->get('wc-ajax')) {
             self::wc_ajax_headers();
@@ -96,26 +93,37 @@ class Ajax
 
     public function cancel_partial()
     {
-        $parcialData = $_REQUEST['parcialData'];
+        if (!isset($_REQUEST['parcialData'])) {
+            wp_send_json_error();
+            die();
+        }
+
+        $parcialData = array_map('sanitize_text_field', wp_unslash($_REQUEST['parcialData']));
+        $result = false;
         if (is_array($parcialData)) {
             $mrpacketCancel = new MRPacketCancel($this->plugin);
-            foreach ($parcialData as $columns) {
+            foreach ($parcialData as $row => $columns) {
                 $primaryKeyOfParcel = $columns[2];
-                $mrpacketCancel->removeParcelFromMRPacket($primaryKeyOfParcel);
+                $result = $mrpacketCancel->removeParcelFromMRPacket($primaryKeyOfParcel);
             }
         }
 
-        wp_send_json_success();
+        wp_send_json_success($result);
         die();
     }
 
     public function reenable_partial()
     {
-        $parcialData = $_REQUEST['parcialData'];
+        if (!isset($_REQUEST['parcialData'])) {
+            wp_send_json_error();
+            die();
+        }
+
+        $parcialData = array_map('sanitize_text_field', wp_unslash($_REQUEST['parcialData']));
         if (is_array($parcialData)) {
             $ordersToReSubmit = [];
             foreach ($parcialData as $row => $columns) {
-                if ($columns[5] == 'Canceled' || $columns[5] == __('Canceled', 'mrpacket')) {
+                if ($columns[7] == 'Canceled') {
                     $ordersToReSubmit[$columns[1]] = $columns[3];
                 } else {
                     unset($parcialData[$row]);
@@ -134,11 +142,16 @@ class Ajax
 
     public function archive_partial()
     {
-        $parcialData = $_REQUEST['parcialData'];
+        if (!isset($_REQUEST['parcialData'])) {
+            wp_send_json_error();
+            die();
+        }
+
+        $parcialData = array_map('sanitize_text_field', wp_unslash($_REQUEST['parcialData']));
         if (is_array($parcialData)) {
             $ordersToArchive = [];
             foreach ($parcialData as $row => $columns) {
-                if ($columns[5] == 'Canceled' || $columns[5] == __('Canceled', 'mrpacket')) {
+                if ($columns[7] == 'Canceled') {
                     $ordersToArchive[$columns[1]] = $columns[3];
                 } else {
                     unset($parcialData[$row]);
@@ -147,13 +160,27 @@ class Ajax
 
             if (is_array($ordersToArchive) && (count($ordersToArchive) > 0)) {
                 foreach ($ordersToArchive as $id => $orderId) {
-                    $this->plugin->helper->archivePacket($id);
+
+                    $this->plugin->helper->db->update(
+                        MRPACKET_TABLE_TRACKING,
+                        array(
+                            'archive' => 1,
+                        ),
+                        array('id' => $id),
+                        array(
+                            '%d',
+                            '%d',
+                        ),
+                        array(
+                            '%d',
+                            '%d'
+                        )
+                    );
 
                     $this->plugin->helper->messages['warning'][] = 'Order with ID: "' . $orderId . '" archived!';
                 }
             }
         }
-
         wp_send_json_success();
         die();
     }

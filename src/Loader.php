@@ -4,7 +4,7 @@
  * MRPacket
  * The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
  * 
- * @version 0.0.1
+ * @version 1.0.0
  * @link https://www.mrpacket.de/api
  * @license GPLv2
  * @author MRPacket <info@mrpacket.de>
@@ -25,11 +25,14 @@ require_once(__DIR__ . DIRECTORY_SEPARATOR . 'constants.php');
 
 class Loader
 {
+
 	protected $actions;
+
 	protected $filters;
 
 	public function __construct()
 	{
+
 		$this->actions = array();
 		$this->filters = array();
 	}
@@ -46,6 +49,7 @@ class Loader
 
 	private function add($hooks, $hook, $component, $callback, $priority, $accepted_args)
 	{
+
 		$hooks[] = array(
 			'hook'          => $hook,
 			'component'     => $component,
@@ -59,6 +63,7 @@ class Loader
 
 	public function run()
 	{
+
 		foreach ($this->filters as $hook) {
 			\add_filter($hook['hook'], array($hook['component'], $hook['callback']), $hook['priority'], $hook['accepted_args']);
 		}

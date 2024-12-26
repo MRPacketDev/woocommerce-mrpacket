@@ -14,11 +14,10 @@ namespace MRPacketForWoo;
  * Plugin Name:				MRPacket
  * Plugin URI:				https://www.mrpacket.de
  * Description:				The MRPacket plugin enables you to import your order data from your WooCommerce shop directly to MRPacket.
- * Version:					0.0.1
- * Requires at least:		6.0
+ * Version:					1.0.0
+ * Requires at least:		6.7
  * Requires PHP:			7.3
- * Stable tag: 0.0.1
- *
+ * 
  * WC requires at least:	3.0.0
  * WC tested up to:			6.6.1
  *
@@ -55,7 +54,7 @@ if (!defined('ABSPATH') || !defined('WPINC')) {
  * NOTE: Update this value only if plugin changes!
  **/
 if (!defined('MRPACKET_PLUGIN_VERSION')) {
-	define('MRPACKET_PLUGIN_VERSION', '0.0.1');
+	define('MRPACKET_PLUGIN_VERSION', '1.0.0');
 }
 
 /**
@@ -65,12 +64,6 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
 	require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
-add_action('before_woocommerce_init', function () {
-	if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
-	}
-});
-
 /**
  * Add Custom Cronjob Schedules
  * (needs to be done here to use in activation hook ...)
@@ -79,19 +72,19 @@ add_action('before_woocommerce_init', function () {
 	if (!isset($schedules['30sec'])) {
 		$schedules['30sec'] = array(
 			'interval' => 30,
-			'display' => __('Once every 30 seconds')
+			'display' => __('Once every 30 seconds', 'mrpacket')
 		);
 	}
 	if (!isset($schedules['5min'])) {
 		$schedules['5min'] = array(
 			'interval' => 5 * 60,
-			'display' => __('Once every 5 minutes')
+			'display' => __('Once every 5 minutes', 'mrpacket')
 		);
 	}
 	if (!isset($schedules['30min'])) {
 		$schedules['30min'] = array(
 			'interval' => 30 * 60,
-			'display' => __('Once every 30 minutes')
+			'display' => __('Once every 30 minutes', 'mrpacket')
 		);
 	}
 	return $schedules;
@@ -152,3 +145,19 @@ add_action('before_woocommerce_init', function () {
 	$plugin = new Plugin($plugin_data);
 	$plugin->run();
 });
+
+add_action('before_woocommerce_init', function () {
+	if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+	}
+});
+
+if (! function_exists('request_filesystem_credentials')) {
+	require_once(ABSPATH . 'wp-admin/includes/file.php');
+}
+
+// Initialize WP Filesystem
+global $wp_filesystem;
+if (! is_object($wp_filesystem)) {
+	WP_Filesystem();
+}

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MRPacket\n"
-"POT-Creation-Date: 2024-04-27 14:39+0200\n"
-"PO-Revision-Date: 2024-04-27 15:37+0200\n"
+"POT-Creation-Date: 2024-12-07 14:36+0100\n"
+"PO-Revision-Date: 2024-12-07 14:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: MRPacket GmbH <info@mrpacket.com>\n"
 "Language: de_DE\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_;esc_html__;esc_html_e;wp_kses;esc_attr;"
 "esc_attr_e\n"
@@ -19,15 +19,19 @@ msgstr ""
 "X-Poedit-SearchPath-1: assets\n"
 "X-Poedit-SearchPath-2: templates\n"
 
-#: src/Admin.php:120 src/Admin.php:147 src/Admin.php:148 src/Settings.php:56
+#: src/Admin.php:120 src/Admin.php:148 src/Admin.php:149 src/Settings.php:56
 msgid "MRPacket Settings"
 msgstr "MRPacket Einstellungen"
 
-#: src/Admin.php:133 src/Admin.php:134
+#: src/Admin.php:134 src/Admin.php:135
 msgid "MRPacket Tracking"
 msgstr "MRPacket Tracking"
 
-#: src/Admin.php:157 src/Settings.php:39
+#: src/Admin.php:156 src/Admin.php:157
+msgid "Logs"
+msgstr "Logs"
+
+#: src/Admin.php:170 src/Settings.php:39
 msgid ""
 "You dont have permission to manage options. Please contact site "
 "administrator. You need the capability (access right) \\'edit_mrpacket\\'."
@@ -36,15 +40,19 @@ msgstr ""
 "kontaktieren Sie den Administrator dieser Seite. Sie benötigen das "
 "Zugriffsrecht \\'edit_mrpacket\\'."
 
-#: src/Admin.php:165 src/Settings.php:83
+#: src/Admin.php:179 src/Admin.php:195 src/Settings.php:83
 msgid "Sorry, your nonce was not correct. Please try again."
 msgstr ""
 "Entschuldigung, die Prüfsumme ihrer Anfrage war nicht korrekt. Bitte "
 "versuchen Sie es erneut oder wenden Sie sich an den Administrator."
 
-#: src/Ajax.php:118 src/Ajax.php:141 src/MRPacketCancel.php:82
-msgid "Canceled"
-msgstr "Abgebrochen"
+#: src/Admin.php:200
+msgid "Downloading Logs.."
+msgstr "Log-Dateien herunterladen..."
+
+#: src/Admin.php:228
+msgid "Clearing Logs.."
+msgstr "Log-Dateien löschen..."
 
 #: src/I18n.php:35
 msgid "MRPacket"
@@ -58,11 +66,7 @@ msgstr ""
 "Mit dem MRPacket-Plugin können Sie Bestelldaten von Ihrem WooCommerce-Shop "
 "direkt an MRPacket übertragen."
 
-#: src/MRPacketCancel.php:58
-msgid "Removed"
-msgstr "Entfernt"
-
-#: src/MRPacketCreate.php:53
+#: src/MRPacketCreate.php:58
 msgid ""
 "No new orders could be found for transfer to MRPacket business with allowed "
 "status (See Settings). List is up to date."
@@ -71,18 +75,14 @@ msgstr ""
 "erlaubtem Status (Vgl. Einstellungen) gefunden werden. Die Liste ist aktuell."
 
 #: src/MRPacketCreate.php:66
-msgid "Error Message: Error while preparing package/oder data for API-call:"
-msgstr "Fehler bei der Vorbereitung des API Aufrufs:"
+msgid "Error Message: Error while preparing package/oder data for API-call"
+msgstr "Fehler bei der Vorbereitung des API Aufrufs"
 
-#: src/MRPacketCreate.php:332
-msgid "Exported"
-msgstr "Exportiert"
-
-#: src/MRPacketCreate.php:339
+#: src/MRPacketCreate.php:333
 msgid "Successfully created parcel. Order ID: "
-msgstr "Paket erfolgreich an MRPacket übertragen! Bestell-ID: "
+msgstr "Paket erfolgreich an MRPacket übertragen! Paket-Id: "
 
-#: src/MRPacketCreate.php:356
+#: src/MRPacketCreate.php:351
 msgid ""
 "Connection/Parcel create error. Please check the shop-admins E-Mail inbox "
 "for details."
@@ -90,7 +90,7 @@ msgstr ""
 "Verbindungsfehler. Bitte prüfen Sie das Postfach der E-Mail Adresse die Sie "
 "in den MRPacket-Plugin-Einstellungen hinterlegt haben."
 
-#: src/MRPacketCreate.php:361
+#: src/MRPacketCreate.php:356
 msgid ""
 "Your Token seems to be invalid. Please go to the WooCommerce > Settings > "
 "MRPacket plugin settings dialogue and request a new one by entering your "
@@ -100,7 +100,7 @@ msgstr ""
 "die Einstellungen des MRPacket-Plugins und fordern Sie einen neuen Token "
 "durch Eingabe ihrer E-Mail Adresse (Benutzername) und Passwort an."
 
-#: src/MRPacketHelper.php:75 src/MRPacketHelper.php:76
+#: src/MRPacketHelper.php:80
 msgid ""
 "Error: Auth Token is missing! Please go to WooCommerce > Settings > MRPacket "
 "plugin settings, and enter your MRPacket username and passwort to get one!"
@@ -109,7 +109,7 @@ msgstr ""
 "> MRPacket Einstellungen. Geben Sie hier ihren MRPacket Benutzernamen (E-"
 "Mail) und Ihr Passwort ein, um einen neuen Token anzufordern!"
 
-#: src/MRPacketHelper.php:135
+#: src/MRPacketHelper.php:137
 msgid ""
 "Error sending mrpacket failure-mail: No valid email address set in mrpacket-"
 "plugin settings."
@@ -117,42 +117,45 @@ msgstr ""
 "Fehler beim senden der MRPacket-Fehler E-Mail. Keine valide E-Mail Adresse "
 "in den MRPacket-Plugin Einstellungen hinterlegt."
 
-#: src/MRPacketHelper.php:143 src/MRPacketHelper.php:148
+#: src/MRPacketHelper.php:145 src/MRPacketHelper.php:152
 msgid "WooCommerce: MRPacket-Plugin API-Error"
 msgstr "WooCommerce: MRPacket-Plugin API-Fehler aufgetreten"
 
-#: src/MRPacketHelper.php:150
+#: src/MRPacketHelper.php:154
 msgid "Dear Shop Owner,"
 msgstr "Sehr geehrter Shopbetreiber,"
 
-#: src/MRPacketHelper.php:152
-msgid "a transfer of orders to the mrpacket backend by the plugin failed."
+#: src/MRPacketHelper.php:156
+msgid ""
+"a transfer of orders to the mrpacket backend by the \"WooCommerce\"-plugin "
+"failed."
 msgstr ""
-"eine Übertragung von Bestellungen an MRPacket durch das Plugin schlug fehlt."
+"eine Übertragung von Bestellungen an MRPacket durch das \"WooCommerce\"-"
+"Plugin schlug fehlt."
 
-#: src/MRPacketHelper.php:154
+#: src/MRPacketHelper.php:158
 msgid "To start the transfer again, please click here:"
 msgstr "Um die Übertragung erneut zu starten, klicken Sie bitte hier:"
 
-#: src/MRPacketHelper.php:156
+#: src/MRPacketHelper.php:160
 msgid "Restart Transmission"
 msgstr "Übertragung erneut starten"
 
-#: src/MRPacketHelper.php:158
+#: src/MRPacketHelper.php:162
 msgid "Please do not reply to this automatically generated email."
 msgstr "Bitte antworten Sie nicht auf diese automatisch generierte E-Mail."
 
-#: src/MRPacketHelper.php:160
+#: src/MRPacketHelper.php:164
 msgid "Sincerely, "
 msgstr "Mit freundlichen Grüßen, "
 
-#: src/MRPacketHelper.php:161
+#: src/MRPacketHelper.php:165
 msgid "Your MRPacket-Plugin"
 msgstr "Ihr MRPacket Plugin"
 
-#: src/MRPacketHelper.php:305
-msgid "Archived"
-msgstr "Archiviert"
+#: src/MRPacketHelper.php:198
+msgid "Error at processing order item "
+msgstr "Fehler beim verarbeiten der Bestellposition "
 
 #: src/MRPacketToken.php:44
 msgid ""
@@ -161,21 +164,49 @@ msgstr ""
 "Der folgende MRPacket Auth-Token wurde erfolgreich erstellt und wird für "
 "weitere Anfragen verwendet: "
 
-#: src/Settings.php:111
+#: src/Settings.php:112
 msgid "Your username or password were invalid."
 msgstr "Ihr Benutzername oder Passwort ist nicht korrekt."
 
-#: src/Settings.php:123
+#: src/Settings.php:124
 msgid "Status settings updated successfully."
 msgstr "Die Status-Einstellungen wurden erfolgreich aktualisiert."
 
-#: src/Settings.php:131
+#: src/Settings.php:132
 msgid "Please enter a valid email address!"
 msgstr "Bitte geben Sie eine gültige E-Mail Adresse ein!"
 
-#: src/Settings.php:137
+#: src/Settings.php:138
 msgid "Successfully updated E-Mail address!"
 msgstr "Ihre E-Mail Adresse wurde erfolgreich aktualisiert!"
+
+#: templates/page.backend.logging.php:22
+msgid "Logs of Plugin"
+msgstr "Logs des Plugin"
+
+#: templates/page.backend.logging.php:29
+msgid "Download logs"
+msgstr "Log-Dateien herunterladen"
+
+#: templates/page.backend.logging.php:32
+msgid "Clear logs"
+msgstr "Log-Dateien löschen"
+
+#: templates/page.backend.logging.php:43
+msgid "Id"
+msgstr "Id"
+
+#: templates/page.backend.logging.php:44
+msgid "Type"
+msgstr "Typ"
+
+#: templates/page.backend.logging.php:45
+msgid "message"
+msgstr "Nachricht"
+
+#: templates/page.backend.logging.php:46
+msgid "dCreated"
+msgstr "Erstelldatum"
 
 #: templates/page.backend.settings.php:17
 msgid "MRPacket Settings Page"
@@ -249,35 +280,36 @@ msgstr "An MRPacket übertragene Bestellungen"
 msgid ""
 "<p>Below you can see all orders that have already been transferred from your "
 "shop to MRPacket. </p><strong>Please note:</strong><p>Orders must have the "
-"status \"paid / processed\" in your WooCommerce Shop to be transferred. <br /"
-">The transfer takes place automatically when the status changes. In "
-"addition, for the transfer, only orders that have already been received in "
-"your shop prior to the activation of the plugin will be considered!</p>"
+"status which were selected in the plugin settings in order to be "
+"transferred. <br />The transfer takes place automatically when the status "
+"changes. In addition, for the transfer, only orders that have already been "
+"received in your shop prior to the activation of the plugin will be "
+"considered!</p>"
 msgstr ""
 "<p>Nachfolgend sehen Sie alle Bestellungen, welche bisher von ihrem Shop an "
 "MRPacket erfolgreich übertragen wurden. </p><strong>Bitte beachten Sie:</"
-"strong><p>Bestellungen müssen in ihrem WooCommerce Shop den Status besitzen "
-"welchen Sie in den Einstellungen ausgewählt haben, um übertragen zu werden. "
-"<br />Der Transfer findet automatisiert im Hintergrund statt, wenn der "
-"Bestellstatus gewechselt wird. Zusätzlich werden für den Transfer "
-"ausschließlich Bestellungen berücksichtigt, die nach der initialen "
+"strong><p>Bestellungen müssen in ihrem WooCommerce Shop einen der Status "
+"besitzen, welche in den Plugin Einstellungen ausgewählt wurden, um "
+"übertragen zu werden. <br />Der Transfer findet automatisiert im Hintergrund "
+"statt, wenn der Bestellstatus gewechselt wird. Zusätzlich werden für den "
+"Transfer ausschließlich Bestellungen berücksichtigt, die nach der initialen "
 "Aktivierung des MRPacket-Plugins in Ihrem Shop eingegangen sind!</p>"
 
 #: templates/page.backend.tracking.php:40
 msgid "Update list / send orders"
-msgstr "Liste aktualisieren / Aufträge senden"
+msgstr "Liste aktualisieren / Paketentwürfe senden"
 
 #: templates/page.backend.tracking.php:43
 msgid "Cancel selected orders"
-msgstr "Aufträge stornieren"
+msgstr "Paketentwürfe stornieren"
 
 #: templates/page.backend.tracking.php:46
 msgid "Re-enable selected orders"
-msgstr "Aufträge erneut übertragen"
+msgstr "Paketentwürfe erneut übertragen"
 
 #: templates/page.backend.tracking.php:49
 msgid "Archive selected orders"
-msgstr "Aufträge archivieren"
+msgstr "Paketentwürfe archivieren"
 
 #: templates/page.backend.tracking.php:62
 msgid "ID"
@@ -285,11 +317,11 @@ msgstr "ID"
 
 #: templates/page.backend.tracking.php:63
 msgid "PK"
-msgstr "MRPacket ID"
+msgstr "PK"
 
 #: templates/page.backend.tracking.php:64
 msgid "Order-ID"
-msgstr "Bestellung-ID"
+msgstr "ID-Bestellung"
 
 #: templates/page.backend.tracking.php:65
 msgid "Reference-ID"
@@ -306,6 +338,11 @@ msgstr "Erstelldatum"
 #: templates/page.backend.tracking.php:68
 msgid "Date changed"
 msgstr "Änderungsdatum"
+
+#, fuzzy
+#~| msgid "MRPacket Settings"
+#~ msgid "MRPacket Logging"
+#~ msgstr "MRPacket Einstellungen"
 
 #~ msgid "<strong>Your Tracking-URL:</strong><br /> "
 #~ msgstr "<strong>Ihr Tracking-Link:</strong><br /> "
