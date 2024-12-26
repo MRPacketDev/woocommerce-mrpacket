@@ -2,7 +2,7 @@
 
 # About this plugin
 
-This is the MRPacket plugin. The Plugin is used to import WooCommerce order-data (like parcles, shipping informations etc.) to MRPacket via MRPacket API.
+This is the mrpacket-plugin. The Plugin is used to import WooCommerce order-data (like parcles, shipping informations etc.) to mrpacket via mrpacket api.
 
 MRPacket is a mail order portal aimed at small and medium-sized companies, online shops and frequent commercial senders.
 
